@@ -56,8 +56,9 @@ class UserAuthController extends Controller
             } else {
                 $user = User::where('email',@$request->email)->where('status','!=','D')->first();
             }
+            // dd($user);
             if(!empty(@$user)){ 
-                 
+                
                 $userData = [
                     'name' => @$user->name,
                     // 'type' => @$user->type,
@@ -132,13 +133,15 @@ class UserAuthController extends Controller
                         'data' => @$userData,
                     ],200);
                 }
+                
                 $remember_me = $request->has('remember') ? true : false;
-
+                // dd($remember_me);
                 $credentials = [
                     'email' => @$request->email,
                     'password' => @$request->password,
                     'status' => 'A'
                 ];
+                
                 if(JWTAuth::attempt($credentials,$remember_me)){
                     $token = JWTAuth::fromUser(@$user); 
                     // $userData = [

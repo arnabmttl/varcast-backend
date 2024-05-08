@@ -95,8 +95,8 @@ return [
 
         'mongodb' => [
             // 'driver' => 'mongodb',
-            'host' => 'localhost',
-            'port' => '27017',
+            // 'host' => 'localhost',
+            // 'port' => '27017',
             // 'database' => 'varcast',
             // 'username' => env('DB_USERNAME'),
             // 'password' => env('DB_PASSWORD'),

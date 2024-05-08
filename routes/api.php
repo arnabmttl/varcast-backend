@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PodcastController;
+use App\Http\Controllers\Api\LiveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,11 @@ Route::group([
     Route::prefix('podcast')->name('podcast.')->group(function(){
         Route::get('/list', [PodcastController::class, 'list'])->name('list');
         Route::post('/create', [PodcastController::class, 'create'])->name('create');
+    });
+
+    Route::prefix('lives')->name('lives.')->group(function(){
+        Route::get('/list', [LiveController::class, 'list'])->name('list');
+        Route::post('/create', [LiveController::class, 'create'])->name('create');
     });
     
 });
