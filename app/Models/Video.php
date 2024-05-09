@@ -6,18 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-// use Jenssegers\Mongodb\Relations\HasMany;
-// use MongoDB\Laravel\Relations\HasMany;
-use App\Models\LiveLike;
+use App\Models\VideoLike;
 
-
-
-class Live extends Model
+class Video extends Model
 {
     use HasFactory;
     protected $guarded = [];
     protected $connection = 'mongodb';
-    protected $collection = 'lives';
+    protected $collection = 'videos';
 
     /**
      * Get all of the likes for the Live
@@ -26,6 +22,6 @@ class Live extends Model
      */
     public function likes(): HasMany
     {
-        return $this->hasMany(LiveLike::class, 'liveId', '_id');
+        return $this->hasMany(VideoLike::class, 'videoId', '_id');
     }
 }

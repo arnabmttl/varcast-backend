@@ -34,7 +34,11 @@ class PodcastController extends Controller
         ]);
         if($validator->fails()){
             foreach($validator->errors()->messages() as $key => $value){
-                return response()->json(['status' => $value[0]], 400);
+                return \Response::json([
+                    'status' => false,
+                    'message' => "validation",
+                    'data' =>  $value[0]
+                ], 400);
             }
         }
         

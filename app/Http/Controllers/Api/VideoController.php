@@ -6,35 +6,38 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Models\Live;
-use App\Models\LiveLike;
+use App\Models\Video;
+use App\Models\VideoLike;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 
-class LiveController extends Controller
+class VideoController extends Controller
 {
-    //
 
-    public function __construct() {
-
+    public function __construct(Request $request)
+    {
+        $token = $request->header('x-access-token');
+        $request->headers->set('Authorization', @$token);
     }
 
+
     /**
-     * List of all lives.
+     * List of all video.
      * GET
      *
      * @return \Illuminate\Http\Response
      */
-
-    public function list() : JsonResponse {
+    public function list(): JsonResponse
+    {
         
+
         $data = (object)[];
 
-        $countData = DB::connection('mongodb')->collection('lives')->count();
-        $listData = Live::with('likes')->get();
+        $countData = DB::connection('mongodb')->collection('videos')->count();
+        $listData = Video::with('likes')->get();
         return \Response::json([
             'status' => true,
-            'message' => "All live lists",
+            'message' => "All videos",
             'data' => array(
                 'countData' => $countData,
                 'listData' => $listData
@@ -44,14 +47,13 @@ class LiveController extends Controller
     }
 
     /**
-     * Create Lives
+     * Create Video
      * POST
      *
      * @return \Illuminate\Http\Response
      */
-
-    public function create(Request $request) : JsonResponse {
-        
+    public function create(Request $request) : JsonResponse
+    {
         $validator = \Validator::make($request->all(),[
             'title' => 'required',
             'overview' => 'required',
@@ -60,11 +62,7 @@ class LiveController extends Controller
         ]);
         if($validator->fails()){
             foreach($validator->errors()->messages() as $key => $value){
-                return \Response::json([
-                    'status' => false,
-                    'message' => "validation",
-                    'data' =>  $value[0]
-                ], 400);
+                return response()->json(['status' => $value[0]], 400);
             }
         }
         $params = $request->except('_token');
@@ -72,29 +70,27 @@ class LiveController extends Controller
         $params['isActive'] = true;
         $params['slug'] = \Str::slug($params['title']);
         // dd($params);
-        $data = Live::create($params);
+        $data = Video::create($params);
         
         return \Response::json([
             'status' => true,
-            'message' => "Live Created",
+            'message' => "Video Created",
             'data' =>  $data
         ], 201);
 
 
     }
 
-    
     /**
-     * Like / Dislike Lives
+     * Like / Dislike Video
      * POST
      *
      * @return \Illuminate\Http\Response
      */
-
     public function like(Request $request): JsonResponse {
-              
+        
         $validator = \Validator::make($request->all(),[
-            'liveId' =>'required'           
+            'videoId' =>'required'           
         ]);
 
         if($validator->fails()){
@@ -110,22 +106,23 @@ class LiveController extends Controller
         $params = $request->except('_token');
         $params['userId'] = '663a30bb31f889e238081e3a';
 
-        $existLives = Live::where('_id', $params['liveId'])->first();
-        if(empty($existLives)){
+        $existVideo = Video::where('_id', $params['videoId'])->first();
+
+        if(empty($existVideo)){
             return response()->json([
                 "code"=> 400,
-                'status' => 'validation',
-                'message' => "Invalid live id"
+                'status' => 'invalid_video',
+                'message' => "Invalid video id"
             ],400);
         }
-        $existLiked = LiveLike::where('liveId', $params['liveId'])->where('userId', $params['userId'])->first();
+        $existLiked = VideoLike::where('videoId', $params['videoId'])->where('userId', $params['userId'])->first();
 
         $msg = "";
         if(!empty($existLiked)){
-            LiveLike::where('_id', $existLiked->_id)->delete();
+            VideoLike::where('_id', $existLiked->_id)->delete();
             $msg = "Disliked";
         } else {
-            LiveLike::create($params);
+            VideoLike::create($params);
             $msg = "Liked";
         }
         
@@ -137,4 +134,5 @@ class LiveController extends Controller
 
     }
 
+    
 }

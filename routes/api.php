@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\LiveController;
+use App\Http\Controllers\Api\VideoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,13 @@ Route::group([
     Route::prefix('lives')->name('lives.')->group(function(){
         Route::get('/list', [LiveController::class, 'list'])->name('list');
         Route::post('/create', [LiveController::class, 'create'])->name('create');
+        Route::post('/like', [LiveController::class, 'like'])->name('like');
+    });
+
+    Route::prefix('videos')->name('videos.')->group(function(){
+        Route::get('/list', [VideoController::class, 'list'])->name('list');
+        Route::post('/create', [VideoController::class, 'create'])->name('create');
+        Route::post('/like', [VideoController::class, 'like'])->name('like');
     });
     
 });
