@@ -65,12 +65,14 @@ Route::group([
         Route::get('/list', [LiveController::class, 'list'])->name('list');
         Route::post('/create', [LiveController::class, 'create'])->name('create');
         Route::post('/like', [LiveController::class, 'like'])->name('like');
+        Route::post('/comment', [LiveController::class, 'comment'])->name('comment');
     });
 
     Route::prefix('videos')->name('videos.')->group(function(){
         Route::get('/list', [VideoController::class, 'list'])->name('list');
         Route::post('/create', [VideoController::class, 'create'])->name('create');
         Route::post('/like', [VideoController::class, 'like'])->name('like');
+        Route::post('/comment', [VideoController::class, 'comment'])->name('comment');
     });
     
 });

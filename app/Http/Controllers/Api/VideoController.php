@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Video;
 use App\Models\VideoLike;
+use App\Models\VideoComment;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 
@@ -34,7 +35,7 @@ class VideoController extends Controller
         $data = (object)[];
 
         $countData = DB::connection('mongodb')->collection('videos')->count();
-        $listData = Video::with('likes')->get();
+        $listData = Video::with('likes','comments')->get();
         return \Response::json([
             'status' => true,
             'message' => "All videos",
@@ -130,6 +131,53 @@ class VideoController extends Controller
             'status' => true,
             'message' => $msg,
             'data' =>  (object)[]
+        ], 201);
+
+    }
+
+    /**
+     * Comment On Video
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function comment(Request $request): JsonResponse {
+        
+        $validator = \Validator::make($request->all(),[
+            'videoId' =>'required',
+            'comment' => 'required'
+        ]);
+
+        if($validator->fails()){
+            foreach($validator->errors()->messages() as $key => $value){
+                return \Response::json([
+                    'status' => false,
+                    'message' => "validation",
+                    'data' =>  $value[0]
+                ], 400);
+            }
+        }
+
+        $params = $request->except('_token');
+        $params['userId'] = '663a30bb31f889e238081e3a';
+
+        $existVideo = Video::where('_id', $params['videoId'])->first();
+
+        if(empty($existVideo)){
+            return response()->json([
+                "code"=> 400,
+                'status' => 'invalid_video',
+                'message' => "Invalid video id"
+            ],400);
+        }
+        
+        $data = VideoComment::create($params);
+        $msg = "Commented";
+
+        return \Response::json([
+            'status' => true,
+            'message' => $msg,
+            'data' =>  $data
         ], 201);
 
     }

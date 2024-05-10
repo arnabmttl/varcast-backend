@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\VideoLike;
+use App\Models\VideoComment;
 
 class Video extends Model
 {
@@ -23,5 +24,15 @@ class Video extends Model
     public function likes(): HasMany
     {
         return $this->hasMany(VideoLike::class, 'videoId', '_id');
+    }
+
+    /**
+     * Get all of the comments for the Live
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(VideoComment::class, 'videoId', '_id');
     }
 }
