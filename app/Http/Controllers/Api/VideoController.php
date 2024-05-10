@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use JWTAuth;
 use App\Models\Video;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
@@ -18,7 +19,7 @@ class VideoController extends Controller
     public function __construct(Request $request)
     {
         $token = $request->header('x-access-token');
-        $request->headers->set('Authorization', @$token);
+        $request->headers->set('Authorization', $token);
     }
 
 
@@ -30,21 +31,34 @@ class VideoController extends Controller
      */
     public function list(): JsonResponse
     {
-        
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
 
-        $data = (object)[];
-
-        $countData = DB::connection('mongodb')->collection('videos')->count();
-        $listData = Video::with('likes','comments')->get();
-        return \Response::json([
-            'status' => true,
-            'message' => "All videos",
-            'data' => array(
-                'countData' => $countData,
-                'listData' => $listData
-            )
-        ], 200);
-
+            $data = (object)[];
+            $countData = DB::connection('mongodb')->collection('videos')->count();
+            $listData = Video::with('likes','comments')->get();
+            return \Response::json([
+                'status' => true,
+                'message' => "All videos",
+                'data' => array(
+                    'countData' => $countData,
+                    'listData' => $listData
+                )
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+               
     }
 
     /**
@@ -55,29 +69,45 @@ class VideoController extends Controller
      */
     public function create(Request $request) : JsonResponse
     {
-        $validator = \Validator::make($request->all(),[
-            'title' => 'required',
-            'overview' => 'required',
-            'imageUrl' => 'required',
-            'videoUrl' => 'required' 
-        ]);
-        if($validator->fails()){
-            foreach($validator->errors()->messages() as $key => $value){
-                return response()->json(['status' => $value[0]], 400);
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $validator = \Validator::make($request->all(),[
+                'title' => 'required',
+                'overview' => 'required',
+                'imageUrl' => 'required',
+                'videoUrl' => 'required' 
+            ]);
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return response()->json(['status' => $value[0]], 400);
+                }
             }
+            $params = $request->except('_token');
+            $params['userId'] = $user->_id;
+            $params['isActive'] = true;
+            $params['slug'] = \Str::slug($params['title']);
+            // dd($params);
+            $data = Video::create($params);
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "Video Created",
+                'data' =>  $data
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
         }
-        $params = $request->except('_token');
-        $params['userId'] = '663a30bb31f889e238081e3a';
-        $params['isActive'] = true;
-        $params['slug'] = \Str::slug($params['title']);
-        // dd($params);
-        $data = Video::create($params);
         
-        return \Response::json([
-            'status' => true,
-            'message' => "Video Created",
-            'data' =>  $data
-        ], 201);
 
 
     }
@@ -90,48 +120,66 @@ class VideoController extends Controller
      */
     public function like(Request $request): JsonResponse {
         
-        $validator = \Validator::make($request->all(),[
-            'videoId' =>'required'           
-        ]);
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
 
-        if($validator->fails()){
-            foreach($validator->errors()->messages() as $key => $value){
-                return \Response::json([
-                    'status' => false,
-                    'message' => "validation",
-                    'data' =>  $value[0]
-                ], 400);
+            $validator = \Validator::make($request->all(),[
+                'videoId' =>'required'           
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                }
             }
-        }
+    
+            $params = $request->except('_token');
+            $params['userId'] = $user->_id;
+    
+            $existVideo = Video::where('_id', $params['videoId'])->first();
+    
+            if(empty($existVideo)){
+                return response()->json([
+                    'status' => false,
+                    'message' => "Invalid video id",
+                    'data' => (object)[]
+                ],400);
+            }
+            $existLiked = VideoLike::where('videoId', $params['videoId'])->where('userId', $params['userId'])->first();
+    
+            $msg = "";
+            if(!empty($existLiked)){
+                VideoLike::where('_id', $existLiked->_id)->delete();
+                $msg = "Disliked";
+            } else {
+                VideoLike::create($params);
+                $msg = "Liked";
+            }
+            
+            return \Response::json([
+                'status' => true,
+                'message' => $msg,
+                'data' =>  (object)[]
+            ], 201);
 
-        $params = $request->except('_token');
-        $params['userId'] = '663a30bb31f889e238081e3a';
-
-        $existVideo = Video::where('_id', $params['videoId'])->first();
-
-        if(empty($existVideo)){
+        } catch (\Throwable $e) {
             return response()->json([
-                "code"=> 400,
-                'status' => 'invalid_video',
-                'message' => "Invalid video id"
-            ],400);
-        }
-        $existLiked = VideoLike::where('videoId', $params['videoId'])->where('userId', $params['userId'])->first();
-
-        $msg = "";
-        if(!empty($existLiked)){
-            VideoLike::where('_id', $existLiked->_id)->delete();
-            $msg = "Disliked";
-        } else {
-            VideoLike::create($params);
-            $msg = "Liked";
+				"code"=> 403,
+				'status' => 'token_expire',
+				'message' => $e->getMessage(),
+			],403);
         }
         
-        return \Response::json([
-            'status' => true,
-            'message' => $msg,
-            'data' =>  (object)[]
-        ], 201);
 
     }
 
@@ -142,43 +190,61 @@ class VideoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function comment(Request $request): JsonResponse {
-        
-        $validator = \Validator::make($request->all(),[
-            'videoId' =>'required',
-            'comment' => 'required'
-        ]);
 
-        if($validator->fails()){
-            foreach($validator->errors()->messages() as $key => $value){
-                return \Response::json([
-                    'status' => false,
-                    'message' => "validation",
-                    'data' =>  $value[0]
-                ], 400);
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $validator = \Validator::make($request->all(),[
+                'videoId' =>'required',
+                'comment' => 'required'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
             }
-        }
-
-        $params = $request->except('_token');
-        $params['userId'] = '663a30bb31f889e238081e3a';
-
-        $existVideo = Video::where('_id', $params['videoId'])->first();
-
-        if(empty($existVideo)){
+    
+            $params = $request->except('_token');
+            $params['userId'] = $user->_id;
+    
+            $existVideo = Video::where('_id', $params['videoId'])->first();
+    
+            if(empty($existVideo)){
+                return response()->json([
+                    'status' => false,
+                    'message' => "Invalid video id",
+                    'data' => (object)[]
+                ],400);
+            }
+            
+            $data = VideoComment::create($params);
+            $msg = "Commented";
+    
+            return \Response::json([
+                'status' => true,
+                'message' => $msg,
+                'data' =>  $data
+            ], 201);
+        } catch (\Throwable $e) {
             return response()->json([
-                "code"=> 400,
-                'status' => 'invalid_video',
-                'message' => "Invalid video id"
-            ],400);
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
         }
         
-        $data = VideoComment::create($params);
-        $msg = "Commented";
-
-        return \Response::json([
-            'status' => true,
-            'message' => $msg,
-            'data' =>  $data
-        ], 201);
+        
 
     }
 

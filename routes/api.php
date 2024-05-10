@@ -59,6 +59,8 @@ Route::group([
     Route::prefix('podcast')->name('podcast.')->group(function(){
         Route::get('/list', [PodcastController::class, 'list'])->name('list');
         Route::post('/create', [PodcastController::class, 'create'])->name('create');
+        Route::post('/like', [PodcastController::class, 'like'])->name('like');
+        Route::post('/comment', [PodcastController::class, 'comment'])->name('comment');
     });
 
     Route::prefix('lives')->name('lives.')->group(function(){
