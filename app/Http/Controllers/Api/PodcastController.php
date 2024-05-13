@@ -46,12 +46,7 @@ class PodcastController extends Controller
                 },
                 'likes'
                 ])->get();
-
-            // $listData = Podcast::with('likes', function($likes){
-            //     $likes->with('user');
-            // })->with('comments')->get();
-
-
+            
             return \Response::json([
                 'status' => true,
                 'message' => "All podcast lists",
@@ -142,7 +137,7 @@ class PodcastController extends Controller
 			}
 
             $validator = \Validator::make($request->all(),[
-                'podcastId' =>'required'           
+                'podcastId' =>'required|exists:mongodb.podcasts,_id'           
             ]);
     
             if($validator->fails()){
@@ -158,15 +153,7 @@ class PodcastController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
     
-            $existData = Podcast::where('_id', $params['podcastId'])->first();
-    
-            if(empty($existData)){
-                return response()->json([
-                    'status' => false,
-                    'message' => "Invalid video id",
-                    'data' => (object)[]
-                ],400);
-            }
+            
             $existLiked = PodcastLike::where('podcastId', $params['podcastId'])->where('userId', $params['userId'])->first();
     
             $msg = "";
@@ -182,7 +169,7 @@ class PodcastController extends Controller
                 'status' => true,
                 'message' => $msg,
                 'data' =>  (object)[]
-            ], 201);
+            ], 200);
 
         } catch (\Throwable $e) {
             return response()->json([
@@ -213,7 +200,7 @@ class PodcastController extends Controller
 			}
 
             $validator = \Validator::make($request->all(),[
-                'podcastId' =>'required',
+                'podcastId' =>'required|exists:mongodb.podcasts,_id',
                 'comment' => 'required'
             ]);
     
@@ -230,16 +217,7 @@ class PodcastController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
     
-            $existVideo = Podcast::where('_id', $params['podcastId'])->first();
-    
-            if(empty($existVideo)){
-                return response()->json([
-                    'status' => false,
-                    'message' => "Invalid podcast id",
-                    'data' => (object)[]
-                ],400);
-            }
-            
+                        
             $data = PodcastComment::create($params);
             $msg = "Commented";
     

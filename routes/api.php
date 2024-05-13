@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\FollowController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,11 @@ Route::group([
         Route::post('/create', [VideoController::class, 'create'])->name('create');
         Route::post('/like', [VideoController::class, 'like'])->name('like');
         Route::post('/comment', [VideoController::class, 'comment'])->name('comment');
+    });
+
+    Route::prefix('follow')->name('follow.')->group(function(){
+        Route::post('/post', [FollowController::class, 'post'])->name('post');
+        
     });
     
 });

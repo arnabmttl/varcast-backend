@@ -135,7 +135,7 @@ class VideoController extends Controller
 			}
 
             $validator = \Validator::make($request->all(),[
-                'videoId' =>'required'           
+                'videoId' =>'required|exists:mongodb.videos,_id'           
             ]);
     
             if($validator->fails()){
@@ -151,15 +151,6 @@ class VideoController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
     
-            $existVideo = Video::where('_id', $params['videoId'])->first();
-    
-            if(empty($existVideo)){
-                return response()->json([
-                    'status' => false,
-                    'message' => "Invalid video id",
-                    'data' => (object)[]
-                ],400);
-            }
             $existLiked = VideoLike::where('videoId', $params['videoId'])->where('userId', $params['userId'])->first();
     
             $msg = "";
@@ -175,7 +166,7 @@ class VideoController extends Controller
                 'status' => true,
                 'message' => $msg,
                 'data' =>  (object)[]
-            ], 201);
+            ], 200);
 
         } catch (\Throwable $e) {
             return response()->json([
@@ -206,7 +197,7 @@ class VideoController extends Controller
 			}
 
             $validator = \Validator::make($request->all(),[
-                'videoId' =>'required',
+                'videoId' =>'required|exists:mongodb.videos,_id',
                 'comment' => 'required'
             ]);
     
@@ -222,16 +213,6 @@ class VideoController extends Controller
     
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
-    
-            $existVideo = Video::where('_id', $params['videoId'])->first();
-    
-            if(empty($existVideo)){
-                return response()->json([
-                    'status' => false,
-                    'message' => "Invalid video id",
-                    'data' => (object)[]
-                ],400);
-            }
             
             $data = VideoComment::create($params);
             $msg = "Commented";

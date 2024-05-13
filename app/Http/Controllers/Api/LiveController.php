@@ -139,7 +139,7 @@ class LiveController extends Controller
 			}
 
             $validator = \Validator::make($request->all(),[
-                'liveId' =>'required'           
+                'liveId' =>'required|exists:mongodb.lives,_id'           
             ]);
     
             if($validator->fails()){
@@ -155,14 +155,7 @@ class LiveController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
     
-            $existLives = Live::where('_id', $params['liveId'])->first();
-            if(empty($existLives)){
-                return response()->json([
-                    "code"=> 400,
-                    'status' => 'validation',
-                    'message' => "Invalid live id"
-                ],400);
-            }
+            
             $existLiked = LiveLike::where('liveId', $params['liveId'])->where('userId', $params['userId'])->first();
     
             $msg = "";
@@ -178,7 +171,7 @@ class LiveController extends Controller
                 'status' => true,
                 'message' => $msg,
                 'data' =>  (object)[]
-            ], 201);
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json([
 				'status' => false,
@@ -207,7 +200,7 @@ class LiveController extends Controller
 				], 200);
 			}
             $validator = \Validator::make($request->all(),[
-                'liveId' =>'required',
+                'liveId' =>'required|exists:mongodb.lives,_id',
                 'comment' => 'required'
             ]);
     
@@ -224,15 +217,6 @@ class LiveController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
     
-            $existLives = Live::where('_id', $params['liveId'])->first();
-            if(empty($existLives)){
-                return response()->json([
-                    "code"=> 400,
-                    'status' => 'validation',
-                    'message' => "Invalid live id"
-                ],400);
-            }
-            
             $data = LiveComment::create($params);
             $msg = "Commented successfully";
             
