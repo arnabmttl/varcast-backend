@@ -134,14 +134,17 @@ class UserAuthController extends Controller
                     ],200);
                 }
                 
-                $remember_me = $request->has('remember') ? true : false;
-                // dd($remember_me);
+                
                 $credentials = [
                     'email' => @$request->email,
                     'password' => @$request->password,
                     'status' => 'A'
                 ];
-                
+
+                // $token = JWTAuth::attempt($credentials, ['exp' => Carbon::now()->addDays(7)->timestamp]);
+                $remember_me = $request->has('remember') ? true : false;
+                // $remember_me = ['exp' => Carbon::now()->addDays(7)->timestamp];
+                // dd($remember_me);
                 if(JWTAuth::attempt($credentials,$remember_me)){
                     $token = JWTAuth::fromUser(@$user); 
                     // $userData = [
