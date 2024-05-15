@@ -9,7 +9,7 @@
     <div class="container">
         <div class="bannerarea d-flex align-items-center">
             <div class="bannertxt">
-                <h2>Make great podcast and stay tuned Hiiii</h2>
+                <h2>Make great podcast and stay tuned</h2>
                 <p class="mt-4"><a href="{{route('download.app')}}" class="bd_btn">Get Started</a></p>
             </div>
             <div class="bannerimg">
