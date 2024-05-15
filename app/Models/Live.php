@@ -28,7 +28,7 @@ class Live extends Model
      */
     public function likes() : HasMany
     {
-        return $this->hasMany(LiveLike::class, 'liveId', '_id');
+        return $this->hasMany(LiveLike::class, 'liveId.toString()', '_id.toString()');
     }
 
     /**
@@ -38,6 +38,6 @@ class Live extends Model
      */
     public function comments() : HasMany
     {
-        return $this->hasMany(LiveComment::class, 'liveId', '_id');
+        return $this->hasMany(LiveComment::class, 'liveId.toString()', '_id.toString()');
     }
 }
