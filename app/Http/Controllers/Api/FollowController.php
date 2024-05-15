@@ -39,7 +39,7 @@ class FollowController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
-            $authId = $user->_id;
+            $authId = new ObjectId($user->_id);
             $validator = \Validator::make($request->all(),[
                 'userId' =>'required|exists:mongodb.users,_id'
             ]);
@@ -54,9 +54,9 @@ class FollowController extends Controller
                 }
             }
             $params = $request->except('_token');
-            $userId = $params['userId'];
+            $userId = new ObjectId($params['userId']);
 
-            $existUser = User::where('_id', $params['userId'])->first();
+            $existUser = User::where('_id', $userId)->first();
             if(empty($existUser)){
                 return response()->json([
                     "code"=> 400,
