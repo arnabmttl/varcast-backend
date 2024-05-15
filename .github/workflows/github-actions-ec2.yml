@@ -31,4 +31,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo apt-get -y update
+            cd home
+            sudo mv * /var/www/html/varcast$
             
