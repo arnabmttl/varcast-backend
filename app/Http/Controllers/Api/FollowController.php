@@ -39,7 +39,7 @@ class FollowController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
-            $authId = new ObjectId($user->_id);
+            $authId = $user->_id;
             $validator = \Validator::make($request->all(),[
                 'userId' =>'required|exists:mongodb.users,_id'
             ]);
@@ -54,7 +54,7 @@ class FollowController extends Controller
                 }
             }
             $params = $request->except('_token');
-            $userId = new ObjectId($params['userId']);
+            $userId = $params['userId'];
 
             $existUser = User::where('_id', $userId)->first();
             if(empty($existUser)){
@@ -82,8 +82,8 @@ class FollowController extends Controller
                 $msg = "Unfollowed";
             } else {
                 $follow = new Follow;
-                $follow->authId = new ObjectId($authId);
-                $follow->userId = new ObjectId($params['userId']);                
+                $follow->authId = $authId;
+                $follow->userId = $params['userId'];                
                 $follow->save();
                 $msg = "Followed";
             }
@@ -121,7 +121,8 @@ class FollowController extends Controller
 			}
             $authId = $user->_id;
 
-            $data = Follow::with('followings:_id,name,email,phone')->where('authId', $authId)->get();
+            $data = Follow::where('authId', $authId)->get();
+            // $data = Follow::with('followings:_id,name,email,phone')->where('authId', $authId)->get();
 
             return \Response::json([
                 'status' => true,
@@ -129,7 +130,7 @@ class FollowController extends Controller
                 'data' =>  $data
             ], 200);
 
-        } catch (\Throwable $teh) {
+        } catch (\Throwable $e) {
             return response()->json([
 				'status' => false,
 				'message' => $e->getMessage(),

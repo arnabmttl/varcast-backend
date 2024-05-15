@@ -42,6 +42,8 @@ class LiveController extends Controller
 			}
             $data = (object)[];
 
+            $userId = $user->_id;
+
             $countData = DB::connection('mongodb')->collection('lives')->count();
             // $listData = Live::with([
             //     'comments' => function($c){
@@ -49,9 +51,7 @@ class LiveController extends Controller
             //     },
             //     'likes'
             //     ])->get();
-            $listData = Live::with(
-                    'comments','likes'
-                    )->get();
+            $listData = Live::with('user')->orderBy('_id', 'desc')->get();
             return \Response::json([
                 'status' => true,
                 'message' => "All live lists",
@@ -107,9 +107,12 @@ class LiveController extends Controller
             // $params['slug'] = \Str::slug($params['title']);
             
             $live = new Live;
-            $live->userId = new ObjectId($user->_id);   
+            $live->userId = $user->_id;   
             $live->title = $params['title'];
             $live->slug = \Str::slug($params['title']);
+            $live->overview = $params['overview'];
+            $live->imageUrl = $params['imageUrl'];
+            $live->videoUrl = $params['videoUrl'];
             $live->isActive = true;                         
             $live->save();
             
@@ -162,8 +165,8 @@ class LiveController extends Controller
             }
     
             $params = $request->except('_token');
-            $userId = new ObjectId($user->_id);    
-            $liveId = new ObjectId($params['liveId']);            
+            $userId = $user->_id;    
+            $liveId = $params['liveId'];            
             $existLiked = LiveLike::where('liveId', $liveId)->where('userId', $userId)->first();
             $msg = "";
             if(!empty($existLiked)){
@@ -228,8 +231,8 @@ class LiveController extends Controller
             // $params['userId'] = $user->_id;
 
             $liveComment = new LiveComment;
-            $liveComment->liveId = new ObjectId($params['liveId']);
-            $liveComment->userId = new ObjectId($user->_id);
+            $liveComment->liveId = $params['liveId'];
+            $liveComment->userId = $user->_id;
             $liveComment->comment = $params['comment'];
             $liveComment->save();
     

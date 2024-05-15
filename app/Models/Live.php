@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // use Jenssegers\Mongodb\Relations\HasMany;
-// use MongoDB\Laravel\Relations\HasMany;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
 use MongoDB\BSON\ObjectID;
@@ -28,7 +28,7 @@ class Live extends Model
      */
     public function likes() : HasMany
     {
-        return $this->hasMany(LiveLike::class, 'liveId.toString()', '_id.toString()');
+        return $this->hasMany(LiveLike::class, 'liveId', '_id');
     }
 
     /**
@@ -38,6 +38,16 @@ class Live extends Model
      */
     public function comments() : HasMany
     {
-        return $this->hasMany(LiveComment::class, 'liveId.toString()', '_id.toString()');
+        return $this->hasMany(LiveComment::class, 'liveId', '_id');
+    }
+
+    /**
+     * Get the user that owns the Live
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'userId', '_id');
     }
 }

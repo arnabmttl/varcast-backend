@@ -95,7 +95,7 @@ class VideoController extends Controller
                 }
             }
             $params = $request->except('_token');
-            $params['userId'] = new ObjectId($user->_id);
+            $params['userId'] = $user->_id;
             $params['isActive'] = true;
             $params['slug'] = \Str::slug($params['title']);
             // dd($params);
