@@ -121,8 +121,8 @@ class FollowController extends Controller
 			}
             $authId = $user->_id;
 
-            $data = Follow::where('authId', $authId)->get();
-            // $data = Follow::with('followings:_id,name,email,phone')->where('authId', $authId)->get();
+            // $data = Follow::where('authId', $authId)->get();
+            $data = Follow::with('followings:_id,name,email,phone')->where('authId', $authId)->get();
 
             return \Response::json([
                 'status' => true,

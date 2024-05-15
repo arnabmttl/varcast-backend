@@ -45,9 +45,11 @@ class VideoController extends Controller
             $countData = DB::connection('mongodb')->collection('videos')->count();
             $listData = Video::with([
                 'comments' => function($c){
-                    $c->with('user:_id,name');
+                    $c->with('user:_id,name,email');
                 },
-                'likes'
+                'likes' => function($l){
+                    $l->with('user:_id,name,email');
+                }
                 ])->get();
             return \Response::json([
                 'status' => true,

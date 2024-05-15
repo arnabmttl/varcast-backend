@@ -45,13 +45,15 @@ class LiveController extends Controller
             $userId = $user->_id;
 
             $countData = DB::connection('mongodb')->collection('lives')->count();
-            // $listData = Live::with([
-            //     'comments' => function($c){
-            //         $c->with('user:_id,name');
-            //     },
-            //     'likes'
-            //     ])->get();
-            $listData = Live::with('user')->orderBy('_id', 'desc')->get();
+            $listData = Live::with([
+                'comments' => function($c){
+                    $c->with('user:_id,name,email');
+                },
+                'likes' => function($l){
+                    $l->with('user:_id,name,email');
+                }
+                ])->orderBy('_id', 'desc')->get();
+            // $listData = Live::with('user:_id,name,email,phone')->orderBy('_id', 'desc')->get();
             return \Response::json([
                 'status' => true,
                 'message' => "All live lists",
