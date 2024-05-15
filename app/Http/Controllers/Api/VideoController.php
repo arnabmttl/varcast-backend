@@ -12,6 +12,7 @@ use App\Models\VideoLike;
 use App\Models\VideoComment;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
+use MongoDB\BSON\ObjectID;
 
 class VideoController extends Controller
 {
@@ -94,7 +95,7 @@ class VideoController extends Controller
                 }
             }
             $params = $request->except('_token');
-            $params['userId'] = $user->_id;
+            $params['userId'] = new ObjectId($user->_id);
             $params['isActive'] = true;
             $params['slug'] = \Str::slug($params['title']);
             // dd($params);

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 // use MongoDB\Laravel\Relations\HasMany;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
+use MongoDB\BSON\ObjectID;
 
 
 
@@ -25,7 +26,7 @@ class Live extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function likes(): HasMany
+    public function likes() : HasMany
     {
         return $this->hasMany(LiveLike::class, 'liveId', '_id');
     }
@@ -35,7 +36,7 @@ class Live extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments(): HasMany
+    public function comments() : HasMany
     {
         return $this->hasMany(LiveComment::class, 'liveId', '_id');
     }

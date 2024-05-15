@@ -80,7 +80,8 @@ Route::group([
 
     Route::prefix('follow')->name('follow.')->group(function(){
         Route::post('/post', [FollowController::class, 'post'])->name('post');
-        
+        Route::get('/followings', [FollowController::class, 'followings'])->name('followings');
+        Route::get('/followers', [FollowController::class, 'followers'])->name('followers');        
     });
     
 });

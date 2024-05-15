@@ -11,6 +11,7 @@ use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
+use MongoDB\BSON\ObjectID;
 
 class FollowController extends Controller
 {
@@ -74,13 +75,16 @@ class FollowController extends Controller
 
             $msg = "";
             $existFollow = Follow::where('authId', $authId)->where('userId', $userId)->first();
-            $params['authId'] = $authId;
+            
             // dd($params);
             if(!empty($existFollow)){
                 Follow::where('_id', $existFollow->_id)->delete();
                 $msg = "Unfollowed";
             } else {
-                Follow::create($params);
+                $follow = new Follow;
+                $follow->authId = new ObjectId($authId);
+                $follow->userId = new ObjectId($params['userId']);                
+                $follow->save();
                 $msg = "Followed";
             }
 
@@ -88,6 +92,75 @@ class FollowController extends Controller
                 'status' => true,
                 'message' => $msg,
                 'data' =>  $params
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * List of all followings.
+     * GET
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function followings(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $authId = $user->_id;
+
+            $data = Follow::with('followings:_id,name,email,phone')->where('authId', $authId)->get();
+
+            return \Response::json([
+                'status' => true,
+                'message' => "All followings",
+                'data' =>  $data
+            ], 200);
+
+        } catch (\Throwable $teh) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * List of all followers.
+     * GET
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function followers(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $authId = $user->_id;
+            $data = Follow::with('followers:_id,name,email,phone')->where('userId', $authId)->get();
+
+            return \Response::json([
+                'status' => true,
+                'message' => "All followers",
+                'data' =>  $data
             ], 200);
 
         } catch (\Throwable $e) {

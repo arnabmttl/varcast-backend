@@ -77,8 +77,9 @@ class LoginController extends Controller
     }
 
     public function login(Request $post){
+        
         $rules = array(
-            'email' => 'required|email|exists:admins',
+            'email' => 'required|email|exists:mongodb.admins,email',
             'password' => 'required'
         );
 
@@ -88,6 +89,8 @@ class LoginController extends Controller
                 return response()->json(['status' => $value[0]], 400);
             }
         }
+
+        
 
         $user = Admin::where('email', $post->email)->first();
         if(!$user){
