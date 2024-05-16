@@ -30,7 +30,7 @@ class LiveController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function list() : JsonResponse {
+    public function list(Request $request) : JsonResponse {
 
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
@@ -41,8 +41,10 @@ class LiveController extends Controller
 				], 200);
 			}
             $data = (object)[];
-
             $userId = $user->_id;
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page * $take);
 
             $countData = DB::connection('mongodb')->collection('lives')->count();
             $listData = Live::with([
@@ -52,7 +54,7 @@ class LiveController extends Controller
                 'likes' => function($l){
                     $l->with('user:_id,name,email');
                 }
-                ])->orderBy('_id', 'desc')->get();
+                ])->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
             // $listData = Live::with('user:_id,name,email,phone')->orderBy('_id', 'desc')->get();
             return \Response::json([
                 'status' => true,

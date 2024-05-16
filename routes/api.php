@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\FollowController;
+use App\Http\Controllers\Api\StripeController;
+use App\Http\Controllers\Api\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +84,14 @@ Route::group([
         Route::post('/post', [FollowController::class, 'post'])->name('post');
         Route::get('/followings', [FollowController::class, 'followings'])->name('followings');
         Route::get('/followers', [FollowController::class, 'followers'])->name('followers');        
+    });
+
+    Route::prefix('stripe')->name('stripe.')->group(function(){
+        Route::get('/test', [StripeController::class, 'test'])->name('test');        
+    });
+
+    Route::prefix('wallet')->name('wallet.')->group(function(){
+        Route::get('/index', [WalletController::class, 'index'])->name('index');        
     });
     
 });
