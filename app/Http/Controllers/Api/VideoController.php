@@ -50,7 +50,7 @@ class VideoController extends Controller
                 'likes' => function($l){
                     $l->with('user:_id,name,email');
                 }
-                ])->get();
+                ])->orderBy('_id', 'desc')->get();
             return \Response::json([
                 'status' => true,
                 'message' => "All videos",
