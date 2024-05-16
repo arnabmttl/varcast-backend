@@ -30,7 +30,7 @@ class VideoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list(): JsonResponse
+    public function list(Request $request): JsonResponse
     {
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
@@ -43,6 +43,10 @@ class VideoController extends Controller
 
             $data = (object)[];
             $countData = DB::connection('mongodb')->collection('videos')->count();
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page * $take);
+
             $listData = Video::with([
                 'comments' => function($c){
                     $c->with('user:_id,name,email');
@@ -50,7 +54,7 @@ class VideoController extends Controller
                 'likes' => function($l){
                     $l->with('user:_id,name,email');
                 }
-                ])->orderBy('_id', 'desc')->get();
+                ])->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
             return \Response::json([
                 'status' => true,
                 'message' => "All videos",

@@ -38,6 +38,10 @@ class PodcastController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page * $take);
+
             $data = (object)[];
             $countData = DB::connection('mongodb')->collection('podcasts')->count();
             $listData = Podcast::with([
@@ -45,7 +49,7 @@ class PodcastController extends Controller
                     $c->with('user:_id,name');
                 },
                 'likes'
-                ])->orderBy('_id','desc')->get();
+                ])->orderBy('_id','desc')->take($take)->skip($skip)->get();
             
             return \Response::json([
                 'status' => true,
