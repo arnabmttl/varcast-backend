@@ -45,7 +45,7 @@ class PodcastController extends Controller
                     $c->with('user:_id,name');
                 },
                 'likes'
-                ])->get();
+                ])->orderBy('_id','desc')->get();
             
             return \Response::json([
                 'status' => true,
