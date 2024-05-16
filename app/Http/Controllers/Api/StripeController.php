@@ -10,7 +10,9 @@ class StripeController extends Controller
     //
     public function test(Request $request) {
 
-        $sk = "sk_test_51PBDrd2KPQJZmU7TVgIqi0q2R45DrPUfqvVK0fLAIX8vas8Gt7PQuMJP4hFS6N1qOjkNHBbGzFnIXsmeOmZkAlx7008Knh5TqE";
+        // dd(getenv('STRIPE_PUBLISHABLE_KEY'));
+
+        $sk = getenv('STRIPE_SECRET_KEY');
         $url ="https://api.stripe.com/v1/charges";
         $headers = array(
             'Accept: application/json',
