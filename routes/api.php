@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +93,10 @@ Route::group([
 
     Route::prefix('wallet')->name('wallet.')->group(function(){
         Route::get('/index', [WalletController::class, 'index'])->name('index');        
+    });
+
+    Route::prefix('test')->name('test.')->group(function(){
+        Route::get('/index', [TestController::class, 'index'])->name('index');        
     });
     
 });
