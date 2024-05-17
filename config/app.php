@@ -17,6 +17,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'stripe_sk_test' => 'sk_test_51PBDrd2KPQJZmU7TVgIqi0q2R45DrPUfqvVK0fLAIX8vas8Gt7PQuMJP4hFS6N1qOjkNHBbGzFnIXsmeOmZkAlx7008Knh5TqE',
+    'stripe_pk_test' => 'pk_test_51PBDrd2KPQJZmU7TtGrca836Ia9QNJOi32phrKIHjjiw5dODfzW6WZZWHVY2KmTfF80ylX9UzK7Gp3wCgt3OuImz00YVRVGOBn',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

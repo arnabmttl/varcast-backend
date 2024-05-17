@@ -10,7 +10,8 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-        $sk = getenv('STRIPE_SECRET_KEY');
+        // $sk = getenv('STRIPE_SECRET_KEY');
+        $sk = config('app.stripe_sk_test');
         echo $sk;
     }
 }
