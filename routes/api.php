@@ -88,7 +88,8 @@ Route::group([
     });
 
     Route::prefix('stripe')->name('stripe.')->group(function(){
-        Route::get('/test', [StripeController::class, 'test'])->name('test');        
+        Route::get('/test', [StripeController::class, 'test'])->name('test');         
+        Route::post('/post', [StripeController::class, 'post'])->name('post');         
     });
 
     Route::prefix('wallet')->name('wallet.')->group(function(){
@@ -96,7 +97,7 @@ Route::group([
     });
 
     Route::prefix('test')->name('test.')->group(function(){
-        Route::get('/index', [TestController::class, 'index'])->name('index');        
+        Route::get('/index', [TestController::class, 'index'])->name('index');      
     });
     
 });
