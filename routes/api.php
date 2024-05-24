@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\GiftController;
+use App\Http\Controllers\Api\CoinInventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,10 @@ Route::group([
     Route::prefix('gift')->name('gift.')->group(function(){
         Route::get('/index', [GiftController::class, 'index'])->name('index');
         Route::post('/send', [GiftController::class, 'send'])->name('send');      
+    });
+
+    Route::prefix('coin-inventory')->name('coin-inventory.')->group(function(){
+        Route::get('/index', [CoinInventoryController::class, 'index'])->name('index');
     });
     
 });
