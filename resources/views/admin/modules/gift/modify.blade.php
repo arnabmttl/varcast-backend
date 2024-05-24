@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="coin_value">Coin Value <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control numberOnly" name="coin_value" id="coin_value"  value="@if(!empty($data)) {{$data->coin_value}} @endif" placeholder="Coin Value" maxlength="5">
+                        <input type="text" class="form-control numberOnly" name="coin_value" id="coin_value" @if(!empty($data))  value="{{$data->coin_value}}" @endif placeholder="Coin Value" maxlength="5">
                         @error('coin_value')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

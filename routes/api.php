@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\GiftController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,11 @@ Route::group([
 
     Route::prefix('test')->name('test.')->group(function(){
         Route::get('/index', [TestController::class, 'index'])->name('index');      
+    });
+
+    Route::prefix('gift')->name('gift.')->group(function(){
+        Route::get('/index', [GiftController::class, 'index'])->name('index');
+        Route::post('/send', [GiftController::class, 'send'])->name('send');      
     });
     
 });
