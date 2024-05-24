@@ -33,19 +33,20 @@ class CoinPriceController extends Controller
 
 
     public function store(Request $request) {
+        // dd($request->all());
         $validated = $request->validate([
             'plan_name' => [
                 'required',
                 'string',
                 'max:199',
-                Rule::unique('coin_prices')->where(function($query) use ($request){
+                Rule::unique('mongodb.coin_prices')->where(function($query) use ($request){
                     $query->where('status','!=','D')->where('_id','!=',@$request->rowid);
                 })
             ],
             'plan_coin' => [
                 'required',
                 'numeric',
-                Rule::unique('coin_prices','from_coin')->where(function($query) use ($request){
+                Rule::unique('mongodb.coin_prices','from_coin')->where(function($query) use ($request){
                     $query->where('status','!=','D')->where('_id','!=',@$request->rowid);
                 })
             ],
