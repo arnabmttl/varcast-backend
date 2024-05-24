@@ -37,6 +37,11 @@
                     <span>Coin Plan Management</span>
                 </a>
             </li>
+            <li class="@if(Route::is('admin.gift.index') || Route::is('admin.gift.add') || Route::is('admin.gift.edit')) active @endif">
+                <a href="{{route('admin.gift.index')}}"><i class="fa fa-plane"></i>
+                    <span>Gift Management</span>
+                </a>
+            </li>
             <li class="@if(Route::is('admin.emoji.index') || Route::is('admin.emoji.add') || Route::is('admin.emoji.edit')) active @endif">
                 <a href="{{route('admin.emoji.index')}}"><i class="fa fa-smile-o"></i>
                     <span>Emoji Management</span>

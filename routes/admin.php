@@ -124,6 +124,14 @@ Route::middleware('admin.auth')->group(function(){
 		Route::get('/delete/{id}', 'Modules\CoinPrice\CoinPriceController@delete')->name('delete');
 		Route::get('/status/{id}', 'Modules\CoinPrice\CoinPriceController@status')->name('status');
 	});
+	//gift management
+	Route::prefix('/gift')->name('gift.')->group(function(){
+		Route::get('/index', 'Modules\Gift\GiftController@index')->name('index');
+		Route::get('/add', 'Modules\Gift\GiftController@create')->name('add');
+		Route::post('/store', 'Modules\Gift\GiftController@store')->name('store');
+		Route::get('/edit/{id}', 'Modules\Gift\GiftController@edit')->name('edit');
+		Route::get('/status/{id}', 'Modules\Gift\GiftController@status')->name('status');
+	});
 	//emoji management
 	Route::prefix('/emoji')->name('emoji.')->group(function(){
 		Route::get('/index','Modules\Emoji\EmojiController@index')->name('index');
