@@ -87,6 +87,8 @@ class GiftController extends Controller
                 }
             }
 
+            unset($params['rowid']);
+
             $data = Gift::updateOrCreate(['_id' => @$request['rowid']], $params);
             
             if($data){
