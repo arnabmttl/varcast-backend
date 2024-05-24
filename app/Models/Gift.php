@@ -12,4 +12,11 @@ class Gift extends Model
     protected $guarded = [];
 	protected $connection = 'mongodb';
 	protected $collection = 'gifts';
+
+    protected $casts = [
+    	'gift_name' => 'string',
+    	'icon_image' => 'string',
+    	'coin_value' => 'string',
+    	'status' => 'string',
+    ];
 }
