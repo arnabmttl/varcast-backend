@@ -65,4 +65,18 @@ class TestController extends Controller
 
         return $result;
     }
+
+    public function upload(Request $request) {
+        
+
+        $file = $request->file('file');
+        $file_name= time()."_".$file->getClientOriginalName();
+        $location="uploads/livevideos/";
+        //dd($location);
+        $file->move($location,$file_name);
+        $filename=$location."".$file_name;
+        // $params['image']=$filename;
+        dd($file);
+        // Category::insert($params);
+    }
 }

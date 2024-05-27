@@ -100,6 +100,7 @@ Route::group([
 
     Route::prefix('test')->name('test.')->group(function(){
         Route::get('/index', [TestController::class, 'index'])->name('index');      
+        Route::post('/upload', [TestController::class, 'upload'])->name('upload');      
     });
 
     Route::prefix('gift')->name('gift.')->group(function(){

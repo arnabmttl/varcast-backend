@@ -90,10 +90,11 @@ class VideoController extends Controller
 				], 200);
 			}
             $validator = \Validator::make($request->all(),[
-                'title' => 'required',
-                'overview' => 'required',
-                'imageUrl' => 'required',
-                'videoUrl' => 'required' 
+                // 'title' => 'required',
+                // 'overview' => 'required',
+                // 'imageUrl' => 'required',
+                // 'videoUrl' => 'required' 
+                'image' => 'required|file'
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
@@ -103,8 +104,16 @@ class VideoController extends Controller
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
             $params['isActive'] = true;
-            $params['slug'] = \Str::slug($params['title']);
+            // $params['slug'] = \Str::slug($params['title']);
             // dd($params);
+            $file = $request->file('image');
+            $file_name= time()."_".$file->getClientOriginalName();
+            $location="uploads/videos/";
+            //dd($location);
+            $file->move($location,$file_name);
+            $filename=$location."".$file_name;
+            $params['image']=$filename;
+
             $data = Video::create($params);
             
             return \Response::json([
