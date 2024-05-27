@@ -88,8 +88,9 @@ class PodcastController extends Controller
 				], 200);
 			}
             $validator = \Validator::make($request->all(),[
-                'title' => 'required',
-                'overview' => 'required'
+                // 'title' => 'required',
+                // 'overview' => 'required'
+                'image' => 'required|file'
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
@@ -103,8 +104,15 @@ class PodcastController extends Controller
             
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
-            $params['slug'] = \Str::slug($params['title']);
+            // $params['slug'] = \Str::slug($params['title']);
             $params['isActive'] = true;
+            $file = $request->file('image');
+            $file_name= time()."_".$file->getClientOriginalName();
+            $location="uploads/podcasts/";
+            //dd($location);
+            $file->move($location,$file_name);
+            $filename=$location."".$file_name;
+            $params['image']=$filename;
             
             $podcast = Podcast::create($params);
             // echo $podcast->toJson();
