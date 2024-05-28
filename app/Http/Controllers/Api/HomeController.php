@@ -18,6 +18,11 @@ use File;
 
 class HomeController extends Controller
 {
+	public function __construct(Request $request)
+    {
+        $token = $request->header('x-access-token');
+        $request->headers->set('Authorization', $token);
+    }
 	public function getCountry(Request $request){
 		try{
 			$country = Country::where('phonecode', '!=', '0')->orderBy('sortname','asc');
@@ -119,6 +124,47 @@ class HomeController extends Controller
 				"code"=> 403,
 				'status' => 'error',
 				'message' => $e->getMessage(),
+			],403);
+		}
+	}
+	public function index(Request $request){
+		try {
+			if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+			$userId = $user->_id;
+			$latest = 10;
+
+			$latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
+			$categories = \App\Models\Category::select('_id','name','slug')->where('status', 'A')->get();
+
+			return response()->json([
+				'status' => true,
+				'message' => "Homepage",
+                'data' => array(
+					'latest_podcasts' => $latest_podcasts,
+					'latest_videos' => $latest_videos,
+					'latest_followings' => $latest_followings,
+					'latest_followers' => $latest_followers,
+					'categories' => $categories
+				)
+			], 200);
+
+
+
+		} catch (\Throwable $e) {
+			return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
 			],403);
 		}
 	}

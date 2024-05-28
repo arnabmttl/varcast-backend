@@ -79,6 +79,7 @@ class UserController extends Controller
 
 
 			$userId = !empty($request->userId)?$request->userId:'';
+			$latest = 10;
 
 			$data = User::select('_id','name','phone','email','username','gender')->where('_id', $userId)->first();
 			$count_podcasts = \DB::connection('mongodb')->collection('podcasts')->where('userId', $userId)->count();
@@ -86,10 +87,10 @@ class UserController extends Controller
 			$count_followings = \DB::connection('mongodb')->collection('follows')->where('authId', $userId)->count();
 			$count_followers = \DB::connection('mongodb')->collection('follows')->where('userId', $userId)->count();
 
-			$latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->get();
-			$latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->get();
-			$latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->get();
-			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->get();
+			$latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 
 			$data->count_podcasts = $count_podcasts;
 			$data->count_videos = $count_videos;
