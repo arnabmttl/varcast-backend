@@ -31,7 +31,7 @@ Route::group([
 ], function ($router) {
     //authentication route
     // Route::group(['middleware' => 'checkUserStatus'], function () {
-    Route::post('/get-user','Api\Auth\UserAuthController@getUser');
+    Route::get('/get-user','Api\Auth\UserAuthController@getUser');
     Route::post('/edit-profile','Api\Profile\ProfileController@edituserProfile');
     Route::post('/update-password','Api\Profile\ProfileController@updatePassword');
     Route::post('/user-update-data','Api\Profile\ProfileController@updateUserEmailorPhone');
