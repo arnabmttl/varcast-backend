@@ -102,7 +102,7 @@ class UserController extends Controller
 			// dd($data);
 			return response()->json([
 				'status' => true,
-				'message' => "",
+				'message' => "User Profile",
 				'data' => $data
 			],200);
 

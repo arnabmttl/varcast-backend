@@ -217,20 +217,40 @@ class UserAuthController extends Controller
                 ], 200);
             }
             else{
-                if(@$user->status == 'I')
+                if($user->status == 'I')
                 {
                     return response()->json([
-                        "code"=> 200,
-                        'status' => 'inactive_account',
-                        'message' => @trans('error.inactive_user')
+                        'status' => false,
+                        'message' => "Inactive user",
+                        'data' =>  (object)[]
                     ],200);
                 }
-                $user = User::where('_id',@$user->_id)->with('country')->first();
+                $userId = $user->_id;
+                $data = User::select('_id','name','phone','email','username','gender')->where('_id', $userId)->first();
+                $count_podcasts = \DB::connection('mongodb')->collection('podcasts')->where('userId', $userId)->count();
+                $count_videos = \DB::connection('mongodb')->collection('videos')->where('userId', $userId)->count();
+                $count_followings = \DB::connection('mongodb')->collection('follows')->where('authId', $userId)->count();
+                $count_followers = \DB::connection('mongodb')->collection('follows')->where('userId', $userId)->count();
+
+                $latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->get();
+                $latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->get();
+                $latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->get();
+                $latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->get();
+
+                $data->count_podcasts = $count_podcasts;
+                $data->count_videos = $count_videos;
+                $data->count_followings = $count_followings;
+                $data->count_followers = $count_followers;
+                $data->latest_podcasts = $latest_podcasts;
+                $data->latest_videos = $latest_videos;
+                $data->latest_followings = $latest_followings;
+                $data->latest_followers = $latest_followers;
+
+
                 return response()->json([
-                    "code"=> 200,
-                    'status' => 'success',
-                    'message' => @trans('success.fetch'),
-                    'data' => @$user
+                    'status' => true,
+                    'message' => "My Profile",
+                    'data' => $data
                 ],200);
             }
         }
