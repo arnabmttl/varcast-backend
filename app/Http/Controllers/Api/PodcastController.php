@@ -79,6 +79,8 @@ class PodcastController extends Controller
 
     public function create(Request $request) : JsonResponse {
 
+        \App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
+
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
 				return response()->json([					
@@ -87,6 +89,7 @@ class PodcastController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
+            
             $validator = \Validator::make($request->all(),[
                 // 'title' => 'required',
                 // 'overview' => 'required'
