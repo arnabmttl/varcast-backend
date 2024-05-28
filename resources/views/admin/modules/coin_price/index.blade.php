@@ -48,8 +48,8 @@
                         <td>{{ @$loop->index+1 }}</td>
                         <td>{{@$row->plan_name}}</td>
                         <td>{{@$row->from_coin}}</td>
-                        <td class="text-right">{{@$row->price}}</td>
-                        <td class="text-right">{{@$row->sale_price}}</td>
+                        <td>{{@$row->price}}</td>
+                        <td>{{@$row->sale_price}}</td>
                         <td>
                             @if (@$row->status=='A')
                             <span class="label label-success">Active</span>
