@@ -93,7 +93,8 @@ class PodcastController extends Controller
             $validator = \Validator::make($request->all(),[
                 // 'title' => 'required',
                 // 'overview' => 'required'
-                'image' => 'required|file'
+                'image' => 'required|file',
+                'audio' => 'required|file'
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
@@ -109,13 +110,20 @@ class PodcastController extends Controller
             $params['userId'] = $user->_id;
             // $params['slug'] = \Str::slug($params['title']);
             $params['isActive'] = true;
-            $file = $request->file('image');
-            $file_name= time()."_".$file->getClientOriginalName();
-            $location="uploads/podcasts/";
-            //dd($location);
-            $file->move($location,$file_name);
-            $filename=$location."".$file_name;
-            $params['image']=$filename;
+            /* Image File */
+            $fileImage = $request->file('image');
+            $file_name_image= time()."_".$fileImage->getClientOriginalName();
+            $locationImage="uploads/podcasts/";
+            $fileImage->move($locationImage,$file_name_image);
+            $imagefilename=$locationImage."".$file_name_image;
+            $params['image']=$imagefilename;
+            /* Audio File*/
+            $fileAudio = $request->file('audio');
+            $file_name_audio= time()."_".$fileAudio->getClientOriginalName();
+            $locationAudio="uploads/podcasts/";
+            $fileAudio->move($locationAudio,$file_name_audio);
+            $audiofilename=$locationAudio."".$file_name_audio;
+            $params['audio']=$audiofilename;
             
             $podcast = Podcast::create($params);
             // echo $podcast->toJson();
