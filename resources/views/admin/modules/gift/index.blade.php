@@ -53,7 +53,7 @@
                             @endif
 
                         </td>
-                        <td class="text-right">{{ $row['coin_value']}}</td>
+                        <td>{{ $row['coin_value']}}</td>
                         <td>
                             @if ( $row['status']=='A')
                             <span class="label label-success">Active</span>

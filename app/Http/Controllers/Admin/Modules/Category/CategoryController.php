@@ -60,17 +60,19 @@ class CategoryController extends Controller
 
     
     public function store(Request $request) {
+        // die('hi');
+        // dd($request->all());
         $validated = $request->validate([
             'name' => [
                 'required',
-                Rule::unique('categories')->where(function($query) use ($request){
+                Rule::unique('mongodb.categories')->where(function($query) use ($request){
                     $query->where('status','!=','D')->where('_id','!=',@$request->rowid);
                 })
             ],
             'parent_id' => 'nullable',
             'image' => 'nullable|image'
         ]);
-        // dd($request->all());
+        
         try {
             if(!empty(@$request->parent_id)){
                 if(!empty(@$request->parent_sub_category_id)){

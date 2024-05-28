@@ -58,6 +58,7 @@ Route::group([
     Route::post('/list-shorts','Api\UserShortsController@listShorts');
     Route::post('/shorts-status-change','Api\UserShortsController@shortstatuschange');
     Route::post('/list-follower-user','Api\UserController@listFollowersUsers');
+    Route::post('/user-profile','Api\UserController@profile');
     Route::get('/test-event','Api\PushNotification\NotificationController@test');
 
 
