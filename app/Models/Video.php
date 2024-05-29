@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
+use App\Models\User;
 
 class Video extends Model
 {
@@ -34,5 +36,15 @@ class Video extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(VideoComment::class, 'videoId', '_id');
+    }
+
+    /**
+     * Get the user that owns the Video
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'userId', '_id');
     }
 }

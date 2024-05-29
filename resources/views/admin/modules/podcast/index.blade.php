@@ -56,9 +56,11 @@
                         </td>
                         <td>                            
                             <audio controls>
-                                <source src="{{url($row['audio'])}}" type="audio/*">
-                                <source src="{{url($row['audio'])}}" type="audio/*">
-                                Your browser does not support the audio tag.
+                                <source src="{{url($row['audio'])}}" type="audio/mp3">
+                                
+                                {{-- <source src="http://127.0.0.1:8000/uploads/podcasts/1716902043_sample-3s.mp3" type="audio/mp3"> --}}
+                                
+                                
                             </audio>
                         </td>
                         <td>
