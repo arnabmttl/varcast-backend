@@ -9,6 +9,8 @@ use App\Models\Banner;
 use App\Models\Faq;
 use App\Models\Subscribe;
 use App\Models\Testimonial;
+use App\Models\Podcast;
+use App\Models\Video;
 class HomeController extends Controller
 {
     /**
@@ -33,6 +35,8 @@ class HomeController extends Controller
         $data['total_faq'] = Faq::count();
         $data['total_subscribe'] = Subscribe::count();
         $data['total_testimonial'] = Testimonial::count();
+        $data['total_podcast'] = Podcast::count();
+        $data['total_video'] = Video::count();
         return view('admin.modules.dashboard.dashboard',@$data);
         // return view('admin.home');
     }

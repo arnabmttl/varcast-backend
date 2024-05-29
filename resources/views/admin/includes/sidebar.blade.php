@@ -33,18 +33,23 @@
                 </a>
             </li>
             <li class="@if(Route::is('admin.coin.price.index') || Route::is('admin.coin.price.add') || Route::is('admin.coin.price.edit')) active @endif">
-                <a href="{{route('admin.coin.price.index')}}"><i class="fa fa-plane"></i>
+                <a href="{{route('admin.coin.price.index')}}"><i class="fa fa-dollar"></i>
                     <span>Coin Plan Management</span>
                 </a>
             </li>
             <li class="@if(Route::is('admin.gift.index') || Route::is('admin.gift.add') || Route::is('admin.gift.edit')) active @endif">
-                <a href="{{route('admin.gift.index')}}"><i class="fa fa-plane"></i>
+                <a href="{{route('admin.gift.index')}}"><i class="fa fa-gift"></i>
                     <span>Gift Management</span>
                 </a>
             </li>
             <li class="@if(Route::is('admin.podcast.*') ) active @endif">
-                <a href="{{route('admin.podcast.index')}}"><i class="fa fa-plane"></i>
+                <a href="{{route('admin.podcast.index')}}"><i class="fa fa-file-video-o"></i>
                     <span>Podcasts</span>
+                </a>
+            </li>
+            <li class="@if(Route::is('admin.video.*') ) active @endif">
+                <a href="{{route('admin.video.index')}}"><i class="fa fa-video-camera"></i>
+                    <span>Videos</span>
                 </a>
             </li>
             <li class="@if(Route::is('admin.emoji.index') || Route::is('admin.emoji.add') || Route::is('admin.emoji.edit')) active @endif">
