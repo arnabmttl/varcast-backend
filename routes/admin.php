@@ -163,5 +163,9 @@ Route::middleware('admin.auth')->group(function(){
 		Route::get('/index','Modules\Podcast\PodcastController@index')->name('index');
 		
 	});
+	Route::prefix('/video')->name('video.')->group(function(){
+		Route::get('/index','Modules\Video\VideoController@index')->name('index');
+		
+	});
 
 });

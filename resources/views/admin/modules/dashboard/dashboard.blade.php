@@ -148,6 +148,30 @@
                 <a href="{{ route('admin.testimonial.page') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-purple">
+                <div class="inner">
+                    <h3>{{ @$total_podcast }}</h3>
+                    <p>Total Podcasts</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-quote-left"></i>
+                </div>
+                <a href="{{ route('admin.podcast.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-purple">
+                <div class="inner">
+                    <h3>{{ @$total_video }}</h3>
+                    <p>Total Videos</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-quote-left"></i>
+                </div>
+                <a href="{{ route('admin.video.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
     </div>
 </section>
 
