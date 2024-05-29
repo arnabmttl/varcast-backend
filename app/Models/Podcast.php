@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use App\Models\User;
 
 
 class Podcast extends Model
@@ -34,5 +36,15 @@ class Podcast extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(PodcastComment::class, 'podcastId', '_id');
+    }
+
+    /**
+     * Get the user that owns the Podcast
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'userId', '_id');
     }
 }

@@ -30,7 +30,7 @@
                     <input type="hidden" name="rowid" @if(!empty($data)) value="{{$data->_id}}" @endif>
                     <div class="form-group col-md-4">
                         <label for="gift_name">Gift Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control alphaonly" name="gift_name" id="gift_name" @if(!empty($data)) value="{{$data->gift_name}}" @endif placeholder="Gift name">
+                        <input type="text" class="form-control alphaonly" name="gift_name" id="gift_name" @if(!empty($data)) value="{{$data->gift_name}}" @else value="{{ old('gift_name') }}" @endif placeholder="Gift name">
                         @error('gift_name')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="coin_value">Coin Value <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control numberOnly" name="coin_value" id="coin_value" @if(!empty($data))  value="{{$data->coin_value}}" @endif placeholder="Coin Value" maxlength="5">
+                        <input type="text" class="form-control numberOnly" name="coin_value" id="coin_value" @if(!empty($data))  value="{{$data->coin_value}}" @else value="{{ old('coin_value') }}" @endif placeholder="Coin Value" maxlength="5">
                         @error('coin_value')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -71,9 +71,8 @@
 <script>
     $('#giftForm').validate({
         rules: {
-            name: {
-                required: true,
-                digits:true,
+            gift_name: {
+                required: true
             },
             // image: {
             //     required: true

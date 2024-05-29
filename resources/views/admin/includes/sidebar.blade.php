@@ -42,6 +42,11 @@
                     <span>Gift Management</span>
                 </a>
             </li>
+            <li class="@if(Route::is('admin.podcast.*') ) active @endif">
+                <a href="{{route('admin.podcast.index')}}"><i class="fa fa-plane"></i>
+                    <span>Podcasts</span>
+                </a>
+            </li>
             <li class="@if(Route::is('admin.emoji.index') || Route::is('admin.emoji.add') || Route::is('admin.emoji.edit')) active @endif">
                 <a href="{{route('admin.emoji.index')}}"><i class="fa fa-smile-o"></i>
                     <span>Emoji Management</span>
