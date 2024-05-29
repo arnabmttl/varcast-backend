@@ -271,15 +271,15 @@ class UserAuthController extends Controller
             'name'  => 'required|string|max:199',
             'email' =>  [
                 'required','string','email','max:199',
-                // Rule::unique('users','email')->where(function($query) use ($request){
-                //     @$query->where('status','!=','D');
-                // }),
+                Rule::unique('mongodb.users','email')->where(function($query) use ($request){
+                    @$query->where('status','!=','D');
+                }),
             ],
             'phone' => [
                 'required','string','numeric','digits_between:10,15',
-                // Rule::unique('users','phone')->where(function($query) use ($request){
-                //     @$query->where('status','!=','D');
-                // }),                
+                Rule::unique('mongodb.users','phone')->where(function($query) use ($request){
+                    @$query->where('status','!=','D');
+                }),                
             ],
             'password' => 'required|string|min:6',
             'register_for' => 'required|in:app,google,apple',
@@ -309,8 +309,8 @@ class UserAuthController extends Controller
                 'password' => Hash::make(@$request->password),
                 'email_vcode' => @$otpCode,
                 'phone_vcode' => @$otpCode,
-                'is_phone_verify' => 'N',
-                'is_email_verify' => 'N',
+                'is_phone_verify' => 'Y',
+                'is_email_verify' => 'Y',
                 'status' => 'A',
                 // 'is_approved' =>  @$isApproved,
                 'register_for' =>  @$request->register_for,
