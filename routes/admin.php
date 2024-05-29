@@ -159,4 +159,9 @@ Route::middleware('admin.auth')->group(function(){
 		Route::any('/delete/{id?}','Modules\MyMusic\MyMusicController@delete')->name('delete');
 	});
 
+	Route::prefix('/podcast')->name('podcast.')->group(function(){
+		Route::get('/index','Modules\Podcast\PodcastController@index')->name('index');
+		
+	});
+
 });
