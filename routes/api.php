@@ -112,6 +112,8 @@ Route::group([
 
     Route::prefix('coin-inventory')->name('coin-inventory.')->group(function(){
         Route::get('/index', [CoinInventoryController::class, 'index'])->name('index');
+        Route::get('/plans', [CoinInventoryController::class, 'plans'])->name('plans');
+        Route::post('/add', [CoinInventoryController::class, 'add'])->name('add');
     });
     
 });

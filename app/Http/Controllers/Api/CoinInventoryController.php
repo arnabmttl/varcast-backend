@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Gift;
 use App\Models\UserCoin;
 use App\Models\Podcast;
+use App\Models\CoinPrice;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
@@ -48,6 +49,7 @@ class CoinInventoryController extends Controller
             $countData = UserCoin::where('userId', $userId)->count();
             $data = UserCoin::with('gift:id,gift_name,coin_value','podcast:id,title,overview,imageUrl,videoUrl,slug')->where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
+            
             return \Response::json([
                 'status' => true,
                 'message' => "My Coins",
@@ -66,6 +68,90 @@ class CoinInventoryController extends Controller
         }
         
 
+    }
+
+    /**
+     * List of coin pricings or plans
+     * GET
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+
+    public function plans() : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $userId = $user->_id;
+
+            $data = CoinPrice::where('status', 'A')->get();
+
+            return \Response::json([
+                'status' => true,
+                'message' => "Coin Pricings",
+                'data' => array(
+                    'listData' => $data
+                )
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				"code"=> 403,
+				'status' => 'token_expire',
+				'message' => $e->getMessage(),
+			],403);
+        }
+    }
+
+    public function add(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $userId = $user->_id;
+            $request->validate([
+                'coin_id' => 'required|exists:mongodb.coin_prices,_id'
+            ]);
+            $coin_id = $request->coin_id;
+
+            $coin = CoinPrice::find($coin_id);
+            $coin_value = $coin->from_coin;
+
+            $params = $request->except('_token');
+            $params['userId'] = $userId;
+            $params['coin_value'] = $coin_value;
+            
+            $params['type'] = 'credit';
+
+            
+
+            UserCoin::create($params);
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "Coin added to your inventory successfully",
+                'data' => $params
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				"code"=> 403,
+				'status' => 'token_expire',
+				'message' => $e->getMessage(),
+			],403);
+        }
     }
 
     
