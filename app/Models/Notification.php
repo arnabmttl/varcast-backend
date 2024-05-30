@@ -11,4 +11,10 @@ class Notification extends Model
     protected $guarded = [];
     protected $connection = 'mongodb';
     protected $collection = 'notifications';
+
+    protected $casts = [
+    	'userId' => 'string',
+        'type' => 'string',
+    	'message' => 'string'
+    ];
 }

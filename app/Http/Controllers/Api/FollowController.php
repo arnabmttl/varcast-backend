@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use Helper;
 
 class FollowController extends Controller
 {
@@ -86,6 +87,13 @@ class FollowController extends Controller
                 $follow->userId = $params['userId'];                
                 $follow->save();
                 $msg = "Followed";
+
+                /* Add Activity */
+                $authUserName = $user->name;
+                $notificationMsg = $authUserName." is following you";
+                Helper::addNotification($params['userId'], 'follow', $notificationMsg);
+
+
             }
 
             return \Response::json([

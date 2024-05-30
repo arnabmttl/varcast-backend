@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\UserToDeviceToken;
 use App\Models\Activity;
 use App\Models\UserCoin;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\commonMail;
 use Mail;
@@ -200,6 +201,16 @@ class Helper
 
     public static function addActivity($userId,$type,$message){
         Activity::create(
+            [
+                'userId' => $userId,
+                'type' => $type,
+                'message' => $message
+            ]
+        );
+    }
+
+    public static function addNotification($userId,$type,$message){
+        Notification::create(
             [
                 'userId' => $userId,
                 'type' => $type,

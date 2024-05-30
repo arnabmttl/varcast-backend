@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use JWTAuth;
-use App\Models\Podcast;
-use App\Models\PodcastLike;
-use App\Models\PodcastComment;
+use App\Models\Notification;
 use Helper;
 
 class NotificationController extends Controller
@@ -31,6 +29,41 @@ class NotificationController extends Controller
 
 
     public function index(Request $request) : JsonResponse {
-        
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page * $take);
+
+            $userId = $user->_id;
+
+            $countData = Notification::where('userId', $userId)->count();
+            $data = Notification::where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
+
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "My notifications",
+                'data' => array(
+                    'countData' => $countData,
+                    'listData' => $data
+                )
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				"code"=> 403,
+				'status' => 'token_expire',
+				'message' => $e->getMessage(),
+			],403);
+        }
     }
 }
