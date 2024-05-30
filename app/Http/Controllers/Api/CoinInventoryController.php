@@ -135,6 +135,8 @@ class CoinInventoryController extends Controller
             $coin = CoinPrice::find($coin_id);
             $coin_value = $coin->from_coin;
 
+            
+
             $params = $request->except('_token');
             $params['userId'] = $userId;
             $params['coin_value'] = $coin_value;            
@@ -146,10 +148,9 @@ class CoinInventoryController extends Controller
             Helper::addActivity($user->_id,'credit_coin',$activityMessage);
 
             /* Add Notification */
-            if($videoUserId != $user->_id){
                 $notificationMsg = "You purchased ".$coin_value." coins successfully";
                 Helper::addNotification($user->_id, 'credit_coin', $notificationMsg);
-            }
+            
             
             return \Response::json([
                 'status' => true,
