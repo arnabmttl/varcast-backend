@@ -77,10 +77,10 @@
             // image: {
             //     required: true
             // },
-            coin_value: {
-                required: true,
-                number:true,
-            }
+            // coin_value: {
+            //     required: true,
+            //     digits:true,
+            // }
         }
     });
     

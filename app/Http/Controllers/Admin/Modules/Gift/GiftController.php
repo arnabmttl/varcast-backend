@@ -58,6 +58,7 @@ class GiftController extends Controller
             // $data = $this->coinPriceRepository->createCoinPrice(@$request->all());
             $params = $request->except('_token');            
             $params['status'] = 'A';
+            $params['coin_value'] = floatval($params['coin_value']);
             $upload_image=$request->file('image');
 
             if(!empty($request['rowid'])){

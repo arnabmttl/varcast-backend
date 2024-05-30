@@ -8,6 +8,8 @@ use App\Models\Country;
 use App\Models\Content;
 use App\Models\Setting;
 use App\Models\UserToDeviceToken;
+use App\Models\Activity;
+use App\Models\UserCoin;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\commonMail;
 use Mail;
@@ -195,4 +197,15 @@ class Helper
             ], 200);
         }
     }
+
+    public static function addActivity($userId,$type,$message){
+        Activity::create(
+            [
+                'userId' => $userId,
+                'type' => $type,
+                'message' => $message
+            ]
+        );
+    }
+
 }

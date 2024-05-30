@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\GiftController;
 use App\Http\Controllers\Api\CoinInventoryController;
+use App\Http\Controllers\Api\ActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,10 @@ Route::group([
         Route::get('/index', [CoinInventoryController::class, 'index'])->name('index');
         Route::get('/plans', [CoinInventoryController::class, 'plans'])->name('plans');
         Route::post('/add', [CoinInventoryController::class, 'add'])->name('add');
+    });
+
+    Route::prefix('activity')->name('activity.')->group(function(){
+        Route::get('/index', [ActivityController::class, 'index'])->name('index');
     });
     
 });

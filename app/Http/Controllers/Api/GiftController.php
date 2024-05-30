@@ -13,6 +13,7 @@ use App\Models\Podcast;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use Helper;
 
 class GiftController extends Controller
 {
@@ -139,6 +140,11 @@ class GiftController extends Controller
                 'type' => 'debit',
                 'coin_value' => $coin_value
             ]);
+
+            /* Add Activity */
+            $activityMessage = "Send a gift";
+            Helper::addActivity($user->_id,'send_gift',$activityMessage);
+            
 
 
             return \Response::json([
