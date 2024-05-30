@@ -144,6 +144,12 @@ class CoinInventoryController extends Controller
             /* Add Activity */
             $activityMessage = "Purchased ".$coin_value." coins";
             Helper::addActivity($user->_id,'credit_coin',$activityMessage);
+
+            /* Add Notification */
+            if($videoUserId != $user->_id){
+                $notificationMsg = "You purchased ".$coin_value." coins successfully";
+                Helper::addNotification($user->_id, 'credit_coin', $notificationMsg);
+            }
             
             return \Response::json([
                 'status' => true,
