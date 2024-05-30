@@ -7,11 +7,11 @@ use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\StripeController;
-use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\GiftController;
 use App\Http\Controllers\Api\CoinInventoryController;
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,10 +97,7 @@ Route::group([
         Route::post('/post', [StripeController::class, 'post'])->name('post');         
     });
 
-    Route::prefix('wallet')->name('wallet.')->group(function(){
-        Route::get('/index', [WalletController::class, 'index'])->name('index');        
-    });
-
+    
     Route::prefix('test')->name('test.')->group(function(){
         Route::get('/index', [TestController::class, 'index'])->name('index');      
         Route::post('/upload', [TestController::class, 'upload'])->name('upload');      
@@ -119,6 +116,9 @@ Route::group([
 
     Route::prefix('activity')->name('activity.')->group(function(){
         Route::get('/index', [ActivityController::class, 'index'])->name('index');
+    });
+    Route::prefix('notification')->name('notification.')->group(function(){
+        Route::get('/index', [NotificationController::class, 'index'])->name('index');
     });
     
 });

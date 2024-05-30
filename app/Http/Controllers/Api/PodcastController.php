@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Podcast;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use App\Models\Follow;
 use Helper;
 
 class PodcastController extends Controller
@@ -131,6 +132,21 @@ class PodcastController extends Controller
             /* Add Activity */
             Helper::addActivity($user->_id,'create_podcast','Created a podcast');
 
+            /* Add Notification */
+            $authUserName = $user->name;
+            $notificationMsg = $authUserName." created a new podcast";
+
+            $followers = Follow::with('followers:_id,name,email,phone')->where('userId', $user->_id)->get();
+            if(!empty($followers)){
+                foreach($followers as $follow){
+                    Helper::addNotification($follow->followers->_id, 'create_podcast', $notificationMsg);
+                }
+            }
+            
+
+            
+
+
             return \Response::json([
                 'status' => true,
                 'message' => "Podcast Created",
@@ -179,6 +195,9 @@ class PodcastController extends Controller
     
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
+
+            $podcast = Podcast::find( $params['podcastId'] );
+            $podcastUserId = $podcast->userId;
     
             
             $existLiked = PodcastLike::where('podcastId', $params['podcastId'])->where('userId', $params['userId'])->first();
@@ -192,6 +211,14 @@ class PodcastController extends Controller
                 $msg = "Liked";
                 /* Add Activity */
                 Helper::addActivity($user->_id,'liked_podcast','Liked a podcast');
+
+                /* Add Notification */
+                if($podcastUserId != $user->_id){
+                    $authUserName = $user->name;
+                    $notificationMsg = $authUserName." liked your podcast";
+                    Helper::addNotification($podcastUserId, 'like_podcast', $notificationMsg);
+                }
+                
             }
             
             return \Response::json([
@@ -245,6 +272,9 @@ class PodcastController extends Controller
     
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
+
+            $podcast = Podcast::find( $params['podcastId'] );
+            $podcastUserId = $podcast->userId;
     
                         
             $data = PodcastComment::create($params);
@@ -252,6 +282,13 @@ class PodcastController extends Controller
 
             /* Add Activity */
             Helper::addActivity($user->_id,'comment_podcast','Commented a podcast');
+
+            /* Add Notification */
+            if($podcastUserId != $user->_id){
+                $authUserName = $user->name;
+                $notificationMsg = $authUserName." commented on your your podcast";
+                Helper::addNotification($podcastUserId, 'comment_podcast', $notificationMsg);
+            }
     
             return \Response::json([
                 'status' => true,
