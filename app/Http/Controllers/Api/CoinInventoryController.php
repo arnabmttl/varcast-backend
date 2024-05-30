@@ -14,6 +14,7 @@ use App\Models\CoinPrice;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use Helper;
 
 class CoinInventoryController extends Controller
 {
@@ -47,14 +48,20 @@ class CoinInventoryController extends Controller
 
             $userId = $user->_id;
             $countData = UserCoin::where('userId', $userId)->count();
-            $data = UserCoin::with('gift:id,gift_name,coin_value','podcast:id,title,overview,imageUrl,videoUrl,slug')->where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
+            $data = UserCoin::with('podcast:id,title,overview,imageUrl,videoUrl,slug')->where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
+            $debitSum = UserCoin::where('userId',$userId)->where('type','debit')->sum('coin_value');
+            $creditSum = UserCoin::where('userId',$userId)->where('type','credit')->sum('coin_value');
+            
+            $total = ($creditSum - $debitSum);
+            // echo $creditSum ;
             
             return \Response::json([
                 'status' => true,
                 'message' => "My Coins",
                 'data' => array(
                     'countData' => $countData,
+                    'total' => $total,
                     'listData' => $data
                 )
             ], 200);
@@ -130,13 +137,13 @@ class CoinInventoryController extends Controller
 
             $params = $request->except('_token');
             $params['userId'] = $userId;
-            $params['coin_value'] = $coin_value;
-            
+            $params['coin_value'] = $coin_value;            
             $params['type'] = 'credit';
-
-            
-
             UserCoin::create($params);
+
+            /* Add Activity */
+            $activityMessage = "Purchased ".$coin_value." coins";
+            Helper::addActivity($user->_id,'credit_coin',$activityMessage);
             
             return \Response::json([
                 'status' => true,

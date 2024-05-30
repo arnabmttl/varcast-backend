@@ -13,6 +13,7 @@ use App\Models\VideoComment;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use Helper;
 
 class VideoController extends Controller
 {
@@ -115,6 +116,9 @@ class VideoController extends Controller
             $params['image']=$filename;
 
             $data = Video::create($params);
+
+             /* Add Activity */
+             Helper::addActivity($user->_id,'create_video','Created a video');
             
             return \Response::json([
                 'status' => true,
@@ -176,6 +180,8 @@ class VideoController extends Controller
             } else {
                 VideoLike::create($params);
                 $msg = "Liked";
+                /* Add Activity */
+                Helper::addActivity($user->_id,'like_video','Liked a video');
             }
             
             return \Response::json([
@@ -232,6 +238,9 @@ class VideoController extends Controller
             
             $data = VideoComment::create($params);
             $msg = "Commented";
+
+            /* Add Activity */
+            Helper::addActivity($user->_id,'comment_video','Commented a video');
     
             return \Response::json([
                 'status' => true,

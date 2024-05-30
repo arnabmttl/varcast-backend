@@ -16,7 +16,7 @@ class Gift extends Model
     protected $casts = [
     	'gift_name' => 'string',
     	'icon_image' => 'string',
-    	'coin_value' => 'string',
+    	'coin_value' => 'integer',
     	'status' => 'string',
     ];
 }

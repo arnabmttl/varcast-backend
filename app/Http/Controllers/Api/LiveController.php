@@ -13,6 +13,7 @@ use App\Models\LiveComment;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use Helper;
 
 class LiveController extends Controller
 {
@@ -119,6 +120,9 @@ class LiveController extends Controller
             $live->videoUrl = $params['videoUrl'];
             $live->isActive = true;                         
             $live->save();
+
+             /* Add Activity */
+             Helper::addActivity($user->_id,'create_live','Created a live');
             
             return \Response::json([
                 'status' => true,
@@ -182,6 +186,9 @@ class LiveController extends Controller
                 $liveLike->userId = $userId;
                 $liveLike->save();
                 $msg = "Liked";
+
+                /* Add Activity */
+                Helper::addActivity($user->_id,'like_live','Liked a live');
             }
             
             return \Response::json([
@@ -241,6 +248,9 @@ class LiveController extends Controller
             $liveComment->save();
     
             $msg = "Commented successfully";
+
+            /* Add Activity */
+            Helper::addActivity($user->_id,'like_live','Liked a live');
             
             
             return \Response::json([

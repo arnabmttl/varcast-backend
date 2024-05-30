@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Podcast;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use Helper;
 
 class PodcastController extends Controller
 {
@@ -126,7 +127,10 @@ class PodcastController extends Controller
             $params['audio']=$audiofilename;
             
             $podcast = Podcast::create($params);
-            // echo $podcast->toJson();
+            
+            /* Add Activity */
+            Helper::addActivity($user->_id,'create_podcast','Created a podcast');
+
             return \Response::json([
                 'status' => true,
                 'message' => "Podcast Created",
@@ -186,6 +190,8 @@ class PodcastController extends Controller
             } else {
                 PodcastLike::create($params);
                 $msg = "Liked";
+                /* Add Activity */
+                Helper::addActivity($user->_id,'liked_podcast','Liked a podcast');
             }
             
             return \Response::json([
@@ -243,6 +249,9 @@ class PodcastController extends Controller
                         
             $data = PodcastComment::create($params);
             $msg = "Commented";
+
+            /* Add Activity */
+            Helper::addActivity($user->_id,'comment_podcast','Commented a podcast');
     
             return \Response::json([
                 'status' => true,
