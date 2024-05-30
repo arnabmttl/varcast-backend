@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Video;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
+use App\Models\Follow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
@@ -117,8 +118,20 @@ class VideoController extends Controller
 
             $data = Video::create($params);
 
-             /* Add Activity */
-             Helper::addActivity($user->_id,'create_video','Created a video');
+            /* Add Activity */
+            Helper::addActivity($user->_id,'create_video','Created a video');
+
+            /* Add Notification */
+            $authUserName = $user->name;
+            $notificationMsg = $authUserName." created a new video";
+
+            $followers = Follow::with('followers:_id,name,email,phone')->where('userId', $user->_id)->get();
+            if(!empty($followers)){
+                foreach($followers as $follow){
+                    Helper::addNotification($follow->followers->_id, 'create_video', $notificationMsg);
+                }
+            }
+            
             
             return \Response::json([
                 'status' => true,
@@ -170,6 +183,9 @@ class VideoController extends Controller
     
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
+
+            $video = Video::find($params['videoId']);
+            $videoUserId = $video->userId;
     
             $existLiked = VideoLike::where('videoId', $params['videoId'])->where('userId', $params['userId'])->first();
     
@@ -182,6 +198,13 @@ class VideoController extends Controller
                 $msg = "Liked";
                 /* Add Activity */
                 Helper::addActivity($user->_id,'like_video','Liked a video');
+
+                /* Add Notification */
+                if($videoUserId != $user->_id){
+                    $authUserName = $user->name;
+                    $notificationMsg = $authUserName." liked your video";
+                    Helper::addNotification($videoUserId, 'like_video', $notificationMsg);
+                }
             }
             
             return \Response::json([
@@ -235,12 +258,23 @@ class VideoController extends Controller
     
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
+
+            $video = Video::find($params['videoId']);
+            $videoUserId = $video->userId;
             
             $data = VideoComment::create($params);
             $msg = "Commented";
 
             /* Add Activity */
             Helper::addActivity($user->_id,'comment_video','Commented a video');
+
+
+            /* Add Notification */
+            if($videoUserId != $user->_id){
+                $authUserName = $user->name;
+                $notificationMsg = $authUserName." commented on your your video";
+                Helper::addNotification($videoUserId, 'comment_video', $notificationMsg);
+            }
     
             return \Response::json([
                 'status' => true,

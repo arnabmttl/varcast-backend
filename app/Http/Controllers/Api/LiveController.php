@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Live;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
+use App\Models\Follow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
@@ -121,8 +122,19 @@ class LiveController extends Controller
             $live->isActive = true;                         
             $live->save();
 
-             /* Add Activity */
-             Helper::addActivity($user->_id,'create_live','Created a live');
+            /* Add Activity */
+            Helper::addActivity($user->_id,'create_live','Created a live');
+
+            /* Add Notification */
+            $authUserName = $user->name;
+            $notificationMsg = $authUserName." created a new live";
+            $followers = Follow::with('followers:_id,name,email,phone')->where('userId', $user->_id)->get();
+            if(!empty($followers)){
+                foreach($followers as $follow){
+                    Helper::addNotification($follow->followers->_id, 'create_live', $notificationMsg);
+                }
+            }
+            
             
             return \Response::json([
                 'status' => true,
@@ -174,7 +186,12 @@ class LiveController extends Controller
     
             $params = $request->except('_token');
             $userId = $user->_id;    
-            $liveId = $params['liveId'];            
+            $liveId = $params['liveId'];  
+            
+            $live = Live::find($liveId);
+            $liveUserId = $live->userId;
+
+
             $existLiked = LiveLike::where('liveId', $liveId)->where('userId', $userId)->first();
             $msg = "";
             if(!empty($existLiked)){
@@ -189,6 +206,15 @@ class LiveController extends Controller
 
                 /* Add Activity */
                 Helper::addActivity($user->_id,'like_live','Liked a live');
+
+                /* Add Notification */
+                if($liveUserId != $user->_id){
+                    $authUserName = $user->name;
+                    $notificationMsg = $authUserName." liked your liv";
+                    Helper::addNotification($liveUserId, 'like_live', $notificationMsg);
+                }
+
+
             }
             
             return \Response::json([
@@ -241,6 +267,9 @@ class LiveController extends Controller
             $params = $request->except('_token');
             // $params['userId'] = $user->_id;
 
+            $live = Live::find($params['liveId']);
+            $liveUserId = $live->userId;
+
             $liveComment = new LiveComment;
             $liveComment->liveId = $params['liveId'];
             $liveComment->userId = $user->_id;
@@ -250,7 +279,14 @@ class LiveController extends Controller
             $msg = "Commented successfully";
 
             /* Add Activity */
-            Helper::addActivity($user->_id,'like_live','Liked a live');
+            Helper::addActivity($user->_id,'comment_live','Liked a live');
+
+            /* Add Notification */
+            if($liveUserId != $user->_id){
+                $authUserName = $user->name;
+                $notificationMsg = $authUserName." commented on your your live";
+                Helper::addNotification($liveUserId, 'comment_live', $notificationMsg);
+            }
             
             
             return \Response::json([
