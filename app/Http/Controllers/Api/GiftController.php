@@ -123,6 +123,7 @@ class GiftController extends Controller
 
             $giftData = Gift::find($params['giftId']);
             $coin_value = $giftData->coin_value;
+            $gift_name = $giftData->gift_name;
 
             ## Credit To User Coin
             UserCoin::create([
@@ -144,6 +145,13 @@ class GiftController extends Controller
             /* Add Activity */
             $activityMessage = "Send a gift";
             Helper::addActivity($user->_id,'send_gift',$activityMessage);
+
+            /* Add Notification */
+            if($videoUserId != $user->_id){
+                $authUserName = $user->name;
+                $notificationMsg = $authUserName." send a ".$gift_name." gift of ".$coin_value." coin to you";
+                Helper::addNotification($params['userId'], 'send_gift', $notificationMsg);
+            }
             
 
 

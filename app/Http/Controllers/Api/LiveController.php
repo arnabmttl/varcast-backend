@@ -210,7 +210,7 @@ class LiveController extends Controller
                 /* Add Notification */
                 if($liveUserId != $user->_id){
                     $authUserName = $user->name;
-                    $notificationMsg = $authUserName." liked your liv";
+                    $notificationMsg = $authUserName." liked your live";
                     Helper::addNotification($liveUserId, 'like_live', $notificationMsg);
                 }
 
