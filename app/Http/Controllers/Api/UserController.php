@@ -89,7 +89,7 @@ class UserController extends Controller
 
 			$latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
-			$latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_followings = \App\Models\Follow::where('authId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 
 			$data->count_podcasts = $count_podcasts;
