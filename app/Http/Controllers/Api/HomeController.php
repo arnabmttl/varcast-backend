@@ -142,6 +142,7 @@ class HomeController extends Controller
 
 			$latest_podcasts = \App\Models\Podcast::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_videos = \App\Models\Video::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
+			$latest_lives = \App\Models\Live::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followings = \App\Models\Follow::where('userId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 			$categories = \App\Models\Category::select('_id','name','slug')->where('status', 'A')->get();
@@ -152,6 +153,7 @@ class HomeController extends Controller
                 'data' => array(
 					'latest_podcasts' => $latest_podcasts,
 					'latest_videos' => $latest_videos,
+					'latest_lives' => $latest_lives,
 					'latest_followings' => $latest_followings,
 					'latest_followers' => $latest_followers,
 					'categories' => $categories
