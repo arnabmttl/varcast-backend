@@ -22,15 +22,25 @@
                 <thead>
                     <tr>
                         <th>Sl</th>
-                        <th></th>
+                        <th>Image</th>
                         <th>Created By</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        
+                        $page = Request::get('page');
+                        $i = 1;
+                        if( $page == 1){
+                            $i = 1;
+                        } else if ( $page > 1) {
+                            $i = ($paginate*($page-1))+1; 
+                        }
+                    @endphp
                     @if (!empty($data))
                     @foreach ( $data as $row)
                     <tr>
-                        <td>{{ $loop->index+1 }}</td>
+                        <td>{{ $i }}</td>
                         <td>
                             @if(!empty($row['image']))
                                 <img src="{{ url($row['image']) }}" style="width: 40px;" alt="">
@@ -44,6 +54,9 @@
                         
                         
                     </tr>
+                    @php
+                        $i++;
+                    @endphp
                     @endforeach
                     @else
                     <tr>

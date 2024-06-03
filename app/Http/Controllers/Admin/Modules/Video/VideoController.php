@@ -22,8 +22,8 @@ class VideoController extends Controller
     public function index()
     {
         $paginate = 20;
-        $data = Video::select('*')->paginate($paginate);
+        $data = Video::orderBy('_id', 'desc')->paginate($paginate);
         // dd($data);
-        return view('admin.modules.video.index', compact('data'));
+        return view('admin.modules.video.index', compact('data','paginate'));
     }
 }

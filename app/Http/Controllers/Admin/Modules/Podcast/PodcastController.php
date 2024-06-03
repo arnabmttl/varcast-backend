@@ -23,9 +23,9 @@ class PodcastController extends Controller
     public function index()
     {
         $paginate = 20;
-        $data = Podcast::select('*')->paginate($paginate);
+        $data = Podcast::orderBy('_id','desc')->paginate($paginate);
         // dd($data);
-        return view('admin.modules.podcast.index', compact('data'));
+        return view('admin.modules.podcast.index', compact('data','paginate'));
     }
 
 
