@@ -21,8 +21,8 @@
                         <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{@request()->keyword}}" id="keyword">
                     </div>
                     <div class="col-md-3" style="margin-top: 26px;">
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> Search</button>
-                        <a href="{{route('admin.coin.price.index')}}" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Reset</a>
+                        {{-- <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> Search</button>
+                        <a href="{{route('admin.coin.price.index')}}" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Reset</a> --}}
                         <a href="{{route('admin.coin.price.add')}}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add New</a>
                     </div>
                 </form>
@@ -86,6 +86,14 @@
 @endsection
 @push('script')
 <script type="text/javascript">
+    $(document).ready(function(){
+        $("#keyword").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#my-datatable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
     function statusChange(userId,status){
         if(status == 'I'){
             $msg = "Active this plan coin.";

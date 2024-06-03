@@ -42,12 +42,19 @@ class GiftController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
+            $userId = $user->_id;
             $data = Gift::where('status', '!=', 'D')->orderBy('gift_name')->get();
+
+            $debitSum = UserCoin::where('userId',$userId)->where('type','debit')->sum('coin_value');
+            $creditSum = UserCoin::where('userId',$userId)->where('type','credit')->sum('coin_value');
+            
+            $total = ($creditSum - $debitSum);
 
             return \Response::json([
                 'status' => true,
                 'message' => "All gifts",
-                'data' => array(
+                'data' => array(                    
+                    'total' => $total,
                     'listData' => $data
                 )
             ], 200);
