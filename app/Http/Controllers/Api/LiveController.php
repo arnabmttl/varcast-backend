@@ -303,4 +303,123 @@ class LiveController extends Controller
         }
     }
 
+    /**
+     * Details
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function details(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $validator = \Validator::make($request->all(),[
+                'liveId' =>'required|exists:mongodb.lives,_id'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
+            }
+
+            $userId = $user->_id;
+
+            $liveId = !empty($request->liveId)?$request->liveId:'';
+            $data = Live::find($liveId);
+            $isLiked = LiveLike::where('liveId', $liveId)->where('userId', $userId)->count();
+            $isLiked = (!empty($isLiked))?true:false;
+
+            $latestComments = LiveComment::with('user:_id,name,email,phone,username')->where('liveId', $liveId)->orderBy('_id','desc')->take(15)->get();
+            $data->isLiked = $isLiked;
+            $data->latestComments = $latestComments;
+
+            return \Response::json([
+                'status' => true,
+                'message' => "Live Details",
+                'data' =>  $data
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * Comments
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function comments(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $validator = \Validator::make($request->all(),[
+                'liveId' =>'required|exists:mongodb.lives,_id'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
+            }
+
+            $userId = $user->_id;
+
+            $liveId = !empty($request->liveId)?$request->liveId:'';
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page*$take);
+
+            $totalData = LiveComment::where('liveId',$liveId)->count();
+            $listData = LiveComment::with('user:_id,name,email,phone,username')->where('liveId', $liveId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "Live Comments",
+                'data' =>  array(
+                    'totalData' => $totalData,
+                    'listData' => $listData
+                )
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+
 }

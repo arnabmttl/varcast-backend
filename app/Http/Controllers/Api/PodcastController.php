@@ -307,4 +307,124 @@ class PodcastController extends Controller
 
     }
 
+    /**
+     * Details
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function details(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $validator = \Validator::make($request->all(),[
+                'podcastId' =>'required|exists:mongodb.podcasts,_id'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
+            }
+
+            $userId = $user->_id;
+
+            $podcastId = !empty($request->podcastId)?$request->podcastId:'';
+            $data = Podcast::find($podcastId);
+            $isLiked = PodcastLike::where('podcastId', $podcastId)->where('userId', $userId)->count();
+            $isLiked = (!empty($isLiked))?true:false;
+
+            $latestComments = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take(15)->get();
+            $data->isLiked = $isLiked;
+            $data->latestComments = $latestComments;
+
+            return \Response::json([
+                'status' => true,
+                'message' => "Podcast Details",
+                'data' =>  $data
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * Comments
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function comments(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            $validator = \Validator::make($request->all(),[
+                'podcastId' =>'required|exists:mongodb.podcasts,_id'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
+            }
+
+            $userId = $user->_id;
+
+            $podcastId = !empty($request->podcastId)?$request->podcastId:'';
+            $take = !empty($request->take)?$request->take:15;
+            $page = !empty($request->page)?$request->page:0;
+            $skip = ($page*$take);
+
+            $totalData = PodcastComment::where('podcastId',$podcastId)->count();
+            $listData = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "Podcast Comments",
+                'data' =>  array(
+                    'totalData' => $totalData,
+                    'listData' => $listData
+                )
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+
+
 }

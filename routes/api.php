@@ -70,6 +70,8 @@ Route::group([
         Route::post('/create', [PodcastController::class, 'create'])->name('create');
         Route::post('/like', [PodcastController::class, 'like'])->name('like');
         Route::post('/comment', [PodcastController::class, 'comment'])->name('comment');
+        Route::post('/details', [PodcastController::class, 'details'])->name('details');
+        Route::post('/comments', [PodcastController::class, 'comments'])->name('comments');
     });
 
     Route::prefix('lives')->name('lives.')->group(function(){
@@ -77,6 +79,8 @@ Route::group([
         Route::post('/create', [LiveController::class, 'create'])->name('create');
         Route::post('/like', [LiveController::class, 'like'])->name('like');
         Route::post('/comment', [LiveController::class, 'comment'])->name('comment');
+        Route::post('/details', [LiveController::class, 'details'])->name('details');
+        Route::post('/comments', [LiveController::class, 'comments'])->name('comments');
     });
 
     Route::prefix('videos')->name('videos.')->group(function(){
@@ -84,6 +88,8 @@ Route::group([
         Route::post('/create', [VideoController::class, 'create'])->name('create');
         Route::post('/like', [VideoController::class, 'like'])->name('like');
         Route::post('/comment', [VideoController::class, 'comment'])->name('comment');
+        Route::post('/details', [VideoController::class, 'details'])->name('details');
+        Route::post('/comments', [VideoController::class, 'comments'])->name('comments');
     });
 
     Route::prefix('follow')->name('follow.')->group(function(){
