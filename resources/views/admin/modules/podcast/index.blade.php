@@ -35,15 +35,39 @@
                         <th>Title</th>
                         <th>Overview</th>
                         <th>Image</th>
-                        <th>Audio</th>
+                        <th>Audio/Video</th>
                         <th>Created By</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        
+                        $page = Request::get('page');
+                        $i = 1;
+                        if( $page == 1){
+                            $i = 1;
+                        } else if ( $page > 1) {
+                            $i = ($paginate*($page-1))+1; 
+                        }
+                    @endphp
                     @if (!empty($data))
                     @foreach ( $data as $row)
+                    
+                    @php
+                        $audioEx = explode(".",$row['audio']);
+                        $audioEx = end($audioEx);
+                        $audioExtensions = ["mp3","flac","ogg","wav"];
+                        $videoExtensions = ["mp4","mov","wmv","avi","flv","avchd","f4v","swf","mkv"];
+                        $isAudio = $isVideo = false;
+                        if(in_array($audioEx,$audioExtensions)){
+                            $isAudio = true;
+                        }
+                        if(in_array($audioEx,$videoExtensions)){
+                            $isVideo = true;
+                        }                        
+                    @endphp
                     <tr>
-                        <td>{{ $loop->index+1 }}</td>
+                        <td>{{ $i }}</td>
                         <td>{{ $row['title']}}</td>
                         <td>{{ $row['overview']}}</td>
                         <td>
@@ -54,14 +78,17 @@
                             @endif
 
                         </td>
-                        <td>                            
+                        <td> 
+                            @if ($isAudio)
                             <audio controls>
-                                <source src="{{url($row['audio'])}}" type="audio/mp3">
-                                
-                                {{-- <source src="http://127.0.0.1:8000/uploads/podcasts/1716902043_sample-3s.mp3" type="audio/mp3"> --}}
-                                
-                                
+                                <source src="{{url($row['audio'])}}" >
                             </audio>
+                            @else
+                            <video width="300" height="150" controls>
+                                <source src="{{url($row['audio'])}}" >
+                            </video>
+                            @endif                           
+                            
                         </td>
                         <td>
                             {{ $row['user']['name'] }}
@@ -69,6 +96,9 @@
                         
                         
                     </tr>
+                    @php
+                        $i++;
+                    @endphp
                     @endforeach
                     @else
                     <tr>
