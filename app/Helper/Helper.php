@@ -44,9 +44,15 @@ class Helper
     }
 
     // get country code
-    public static function getCountryCode(){
+    public static function getCountryCode($search=''){
         try{
-            $country = Country::where('phonecode', '!=', '0')->orderBy('phonecode','asc')->get();
+            $country = Country::orderBy('phonecode','asc');
+            
+            if(!empty($search)){
+                $country = $country->where('name', 'LIKE', '%'.$search.'%')->orWhere('phonecode', 'LIKE','%'.$search);
+            }
+            
+            $country = $country->get();
             return $country;
         }
         catch(\Exception $e){

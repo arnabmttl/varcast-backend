@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use JWTAuth;
+use Helper;
 use App\Models\Podcast;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
@@ -117,15 +118,17 @@ class TestController extends Controller
             $page = !empty($request->page)?$request->page:0;
             $skip = ($page*$take);
 
-            $totalData = PodcastComment::where('podcastId',$podcastId)->count();
-            $listData = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
+            // $totalData = PodcastComment::where('podcastId',$podcastId)->count();
+            // $listData = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
+
+            $data = Helper::getCountryCode();
             
             return \Response::json([
                 'status' => true,
-                'message' => "Podcast Comments",
+                'message' => "All countries",
                 'data' =>  array(
-                    'totalData' => $totalData,
-                    'listData' => $listData
+                    // 'totalData' => $totalData,
+                    'listData' => $data
                 )
             ], 200);
 
