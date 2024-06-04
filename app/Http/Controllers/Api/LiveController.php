@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Live;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
+use App\Models\LiveView;
 use App\Models\Follow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
@@ -342,6 +343,17 @@ class LiveController extends Controller
             $isLiked = (!empty($isLiked))?true:false;
 
             $latestComments = LiveComment::with('user:_id,name,email,phone,username')->where('liveId', $liveId)->orderBy('_id','desc')->take(15)->get();
+            
+
+            /* Add View For Each New User */
+            $existView = LiveView::where('userId', $userId)->where('liveId',$liveId)->first();
+            if(empty($existView)){
+                LiveView::create([
+                    'userId' => $userId,
+                    'liveId' => $liveId
+                ]);
+            }
+            $data->countView = LiveView::where('liveId',$liveId)->count();
             $data->isLiked = $isLiked;
             $data->latestComments = $latestComments;
 

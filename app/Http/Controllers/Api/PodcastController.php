@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Podcast;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use App\Models\PodcastView;
 use App\Models\Follow;
 use Helper;
 
@@ -81,7 +82,7 @@ class PodcastController extends Controller
 
     public function create(Request $request) : JsonResponse {
 
-        \App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
+        // \App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
 
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
@@ -346,8 +347,19 @@ class PodcastController extends Controller
             $isLiked = (!empty($isLiked))?true:false;
 
             $latestComments = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take(15)->get();
+            
+
+            /* Add View For Each New User */
+            $existView = PodcastView::where('userId', $userId)->where('podcastId',$podcastId)->first();
+            if(empty($existView)){
+                PodcastView::create([
+                    'userId' => $userId,
+                    'podcastId' => $podcastId
+                ]);
+            }
+            $data->countView = PodcastView::where('podcastId',$podcastId)->count();
             $data->isLiked = $isLiked;
-            $data->latestComments = $latestComments;
+            $data->latestComments = $latestComments;       
 
             return \Response::json([
                 'status' => true,
