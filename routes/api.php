@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\GiftController;
 use App\Http\Controllers\Api\CoinInventoryController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\CountryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,7 +108,7 @@ Route::group([
     Route::prefix('test')->name('test.')->group(function(){
         Route::get('/index', [TestController::class, 'index'])->name('index');      
         Route::post('/upload', [TestController::class, 'upload'])->name('upload');      
-        // Route::post('/comments', [TestController::class, 'comments'])->name('comments');      
+        Route::post('/comments', [TestController::class, 'comments'])->name('comments');      
     });
 
     Route::prefix('gift')->name('gift.')->group(function(){
@@ -127,6 +128,9 @@ Route::group([
     Route::prefix('notification')->name('notification.')->group(function(){
         Route::get('/index', [NotificationController::class, 'index'])->name('index');
     });
-    
+    Route::prefix('country')->name('country.')->group(function(){
+        Route::get('/index', [CountryController::class, 'index'])->name('index');
+    });
+        
 });
 
