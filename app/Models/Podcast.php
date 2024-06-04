@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use App\Models\PodcastView;
 use App\Models\User;
 
 
@@ -46,5 +47,15 @@ class Podcast extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId', '_id');
+    }
+
+    /**
+     * Get all of the views for the Podcast
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function views(): HasMany
+    {
+        return $this->hasMany(PodcastView::class, 'podcastId', '_id');
     }
 }

@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Video;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
+use App\Models\VideoView;
 use App\Models\Follow;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
@@ -333,6 +334,17 @@ class VideoController extends Controller
             $isLiked = (!empty($isLiked))?true:false;
 
             $latestComments = VideoComment::with('user:_id,name,email,phone,username')->where('videoId', $videoId)->orderBy('_id','desc')->take(15)->get();
+            
+            /* Add View For Each New User */
+            $existView = VideoView::where('userId', $userId)->where('videoId',$videoId)->first();
+            if(empty($existView)){
+                VideoView::create([
+                    'userId' => $userId,
+                    'videoId' => $videoId
+                ]);
+            }
+
+            $data->countView = VideoView::where('videoId',$videoId)->count();
             $data->isLiked = $isLiked;
             $data->latestComments = $latestComments;
 
