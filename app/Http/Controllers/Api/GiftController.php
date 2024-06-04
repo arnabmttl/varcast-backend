@@ -154,11 +154,16 @@ class GiftController extends Controller
             Helper::addActivity($user->_id,'send_gift',$activityMessage);
 
             /* Add Notification */
-            if($videoUserId != $user->_id){
+            if($podcastUserId != $user->_id){
                 $authUserName = $user->name;
                 $notificationMsg = $authUserName." send a ".$gift_name." gift of ".$coin_value." coin to you";
                 Helper::addNotification($params['userId'], 'send_gift', $notificationMsg);
             }
+
+            $debitSum = UserCoin::where('userId', $params['authId'])->where('type','debit')->sum('coin_value');
+            $creditSum = UserCoin::where('userId', $params['authId'])->where('type','credit')->sum('coin_value');
+            
+            $total = ($creditSum - $debitSum);
             
 
 
@@ -166,6 +171,7 @@ class GiftController extends Controller
                 'status' => true,
                 'message' => " Gift sent successfully ",
                 'data' => array(
+                    'total' => $total,
                     'params' => $params
                 )
             ], 200);
