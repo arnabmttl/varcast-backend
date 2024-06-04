@@ -41,20 +41,36 @@ class CmsController extends Controller
 			'page' => 'required|in:about,terms,privacy',
 		]);
 		try {
-			$content = Content::where('type',@$request->page)->first();
+			$content = Content::where('type',$request->page)->first();
 			if ($request->hasFile('image')) {
-				if (@$content->image) {
-					if (File::exists("storage/content/" . @$content->image)) {
-						File::delete("storage/content/" . @$content->image);
+				if ($content->image) {
+					if (File::exists($content->image)) {
+						File::delete($content->image);
 					}
 				}
-				$time      = Carbon::now();
-				$file      = $request->file('image');
-				$extension = $file->getClientOriginalExtension();
-				$filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
-				$file->storeAs("public/content/", $filename);
-				$data['image'] = $filename;
+				// $time      = Carbon::now();
+				// $file      = $request->file('image');
+				// $extension = $file->getClientOriginalExtension();
+				// $filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
+				// $file->storeAs("public/content/", $filename);
+				// $data['image'] = $filename;
+
+
+				$fileImage = $request->file('image');
+				$file_name_image= time()."_".$fileImage->getClientOriginalName();
+				$locationImage="uploads/content/";
+				$fileImage->move($locationImage,$file_name_image);
+				$imagefilename=$locationImage."".$file_name_image;
+				$data['image']=$imagefilename;
+
+				
 			}
+
+
+
+
+
+
 			$data['name'] = $request->page_name;
 			$data['content'] = $request->content;
 			$data['type'] = $request->page;
