@@ -60,7 +60,7 @@
 						{{-- <label class="custom-file-label" for="formFile">Choose file</label> --}}
 					</div>
 					<div class="previewholder" @if(empty(@$content->image)) style="display: none;" @endif>
-						<img id="digital_signatureimgPreview" src="{{url('storage/content/'.@$content->image)}}" alt="pic" style="width: 100px;  margin-top: 10px;" />
+						<img id="digital_signatureimgPreview" src="{{url(@$content->image)}}" alt="pic" style="width: 100px;  margin-top: 10px;" />
 					</div>
 				</div>
 				@endif
