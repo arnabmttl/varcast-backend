@@ -11,7 +11,9 @@ use App\Models\Video;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
 use App\Models\VideoView;
+use App\Models\VideoCategory;
 use App\Models\Follow;
+use App\Models\Category;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
@@ -93,22 +95,45 @@ class VideoController extends Controller
 				], 200);
 			}
             $validator = \Validator::make($request->all(),[
-                // 'title' => 'required',
-                // 'overview' => 'required',
-                // 'imageUrl' => 'required',
-                // 'videoUrl' => 'required' 
-                'image' => 'required|file'
+                'title' => 'nullable',
+                'description' => 'nullable',                
+                'image' => 'required|file',
+                'tags' => 'array',
+                'categoryIds' => 'array'
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
                     return response()->json(['status' => $value[0]], 400);
                 }
             }
+            
             $params = $request->except('_token');
             $params['userId'] = $user->_id;
             $params['isActive'] = true;
             // $params['slug'] = \Str::slug($params['title']);
+            
+
+            $categoryIds = $params['categoryIds'];
+            if(!empty($categoryIds)){
+                foreach($categoryIds as $cat){
+                    $checkCategory = Category::find($cat);
+                    if(empty($checkCategory)){
+                        return response()->json([
+                            'status' => false,
+                            'message' => "Unknown category id ",
+                            'data' => [
+                                'category_id' => $cat
+                            ]
+                        ],400);
+                    }
+
+                    
+                }
+            }
+
             // dd($params);
+
+
             $file = $request->file('image');
             $file_name= time()."_".$file->getClientOriginalName();
             $location="uploads/videos/";
@@ -117,7 +142,21 @@ class VideoController extends Controller
             $filename=$location."".$file_name;
             $params['image']=$filename;
 
+           
+            unset($params['categoryIds']);
             $data = Video::create($params);
+            $videoId = $data->_id;
+            // dd($videoId);
+
+            if(!empty($categoryIds)){
+                foreach($categoryIds as $cat){
+                    VideoCategory::create([
+                        'videoId' => $videoId,
+                        'categoryId' => $cat
+                    ]);
+                }
+            }
+            
 
             /* Add Activity */
             Helper::addActivity($user->_id,'create_video','Created a video');
@@ -328,7 +367,7 @@ class VideoController extends Controller
             $userId = $user->_id;
 
             $videoId = !empty($request->videoId)?$request->videoId:'';
-            $data = Video::find($videoId);
+            $data = Video::with('categories:_id,categoryId,videoId')->find($videoId);
 
             $isLiked = VideoLike::where('videoId', $videoId)->where('userId', $userId)->count();
             $isLiked = (!empty($isLiked))?true:false;

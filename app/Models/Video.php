@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
 use App\Models\User;
+use App\Models\Category;
 
 class Video extends Model
 {
@@ -46,5 +47,15 @@ class Video extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId', '_id');
+    }
+
+    /**
+     * Get all of the categories for the Video
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(VideoCategory::class, 'videoId', '_id');
     }
 }
