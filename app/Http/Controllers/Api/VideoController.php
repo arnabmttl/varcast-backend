@@ -19,6 +19,7 @@ use App\Models\Category;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use MongoDB\BSON\ObjectID;
+use File;
 use Helper;
 
 class VideoController extends Controller
@@ -106,7 +107,13 @@ class VideoController extends Controller
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
-                    return response()->json(['status' => $value[0]], 400);
+                    
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                    
                 }
             }
             
@@ -488,7 +495,12 @@ class VideoController extends Controller
             ]);
             if($validator->fails()){
                 foreach($validator->errors()->messages() as $key => $value){
-                    return response()->json(['status' => $value[0]], 400);
+                    
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
                 }
             }
             
@@ -607,11 +619,73 @@ class VideoController extends Controller
 				], 200);
 			}
             $userId = $user->_id;
-            $request->validate([
-                'videoDraftId' =>'required|exists:mongodb.video_drafts,_id' 
+            
+            $validator = \Validator::make($request->all(),[
+                'videoDraftId' =>'required|exists:mongodb.video_drafts,_id' ,
+                'title' => 'nullable',
+                'description' => 'nullable',                
+                'image' => 'file',
+                'tags' => 'nullable|array',
+                'categoryIds' => 'nullable|array'
             ]);
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                }
+            }
 
             $params = $request->except('_token');
+            $videoDraftId = $params['videoDraftId'];
+            $videoDraft = VideoDraft::find($videoDraftId);
+            
+            $tags = $videoDraft->tags;
+            // dd($tags);
+            $videoArr['title'] = isset($params['title'])?$params['title']:$videoDraft->title;
+            $videoArr['description'] = isset($params['description'])?$params['description']:$videoDraft->description;
+            $videoArr['tags'] = $tags;
+            $videoArr['image'] = $videoDraft->image;
+            $videoArr['userId'] = $videoDraft->userId;
+            $videoArr['isActive'] = $videoDraft->isActive;
+            $videoArr['image'] = $videoDraft->image;
+            // dd($tags);
+
+            if ($request->hasFile('image')) {
+                if ( !empty($videoDraft->image) ) {
+					if (File::exists($videoDraft->image)) {
+						File::delete($videoDraft->image);
+					}
+				}
+
+                $fileImage = $request->file('image');
+				$file_name_image= time()."_".$fileImage->getClientOriginalName();
+				$locationImage="uploads/videos/";
+				$fileImage->move($locationImage,$file_name_image);
+				$imagefilename=$locationImage."".$file_name_image;
+				$videoArr['image']=$imagefilename;
+            }
+
+            $video = Video::create($videoArr);
+            $videoId = $video->_id;
+
+            $videoDraftCategory = VideoDraftCategory::where('videoDraftId' , $videoDraftId)->get();
+            if(!empty($videoDraftCategory)){
+                foreach($videoDraftCategory as $cat){
+                    VideoCategory::create([
+                        'videoId' => $videoId,
+                        'categoryId' => $cat
+                    ]);
+                }
+            }
+
+            VideoDraft::where('_id', $videoDraftId)->delete();
+            VideoDraftCategory::where('videoDraftId', $videoDraftId)->delete();
+
+            
 
             return \Response::json([
                 'status' => true,
