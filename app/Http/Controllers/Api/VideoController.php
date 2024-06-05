@@ -96,6 +96,7 @@ class VideoController extends Controller
                     'data' => (object)[]
 				], 200);
 			}
+            \App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
             $validator = \Validator::make($request->all(),[
                 'title' => 'nullable',
                 'description' => 'nullable',                
