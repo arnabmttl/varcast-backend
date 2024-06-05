@@ -12,6 +12,8 @@ use App\Models\VideoLike;
 use App\Models\VideoComment;
 use App\Models\VideoView;
 use App\Models\VideoCategory;
+use App\Models\VideoDraft;
+use App\Models\VideoDraftCategory;
 use App\Models\Follow;
 use App\Models\Category;
 use Illuminate\Validation\Rule;
@@ -185,9 +187,6 @@ class VideoController extends Controller
                 'data' => (object)[]
 			],403);
         }
-        
-
-
     }
 
     /**
@@ -452,6 +451,173 @@ class VideoController extends Controller
                     'listData' => $listData
                 )
             ], 200);
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * Save Draft
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function save_draft(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $validator = \Validator::make($request->all(),[
+                'title' => 'nullable',
+                'description' => 'nullable',                
+                'image' => 'required|file',
+                'tags' => 'array',
+                'categoryIds' => 'array'
+            ]);
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return response()->json(['status' => $value[0]], 400);
+                }
+            }
+            
+            $params = $request->except('_token');
+            $params['userId'] = $user->_id;
+            $params['isActive'] = true;
+            
+            $categoryIds = $params['categoryIds'];
+            if(!empty($categoryIds)){
+                foreach($categoryIds as $cat){
+                    $checkCategory = Category::find($cat);
+                    if(empty($checkCategory)){
+                        return response()->json([
+                            'status' => false,
+                            'message' => "Unknown category id ",
+                            'data' => [
+                                'category_id' => $cat
+                            ]
+                        ],400);
+                    }
+                }
+            }
+
+            // dd($params);
+
+
+            $file = $request->file('image');
+            $file_name= time()."_".$file->getClientOriginalName();
+            $location="uploads/videos/";
+            //dd($location);
+            $file->move($location,$file_name);
+            $filename=$location."".$file_name;
+            $params['image']=$filename;
+
+           
+            unset($params['categoryIds']);
+            $data = VideoDraft::create($params);
+            $videoDraftId = $data->_id;
+            // dd($videoId);
+
+            if(!empty($categoryIds)){
+                foreach($categoryIds as $cat){
+                    VideoDraftCategory::create([
+                        'videoDraftId' => $videoDraftId,
+                        'categoryId' => $cat
+                    ]);
+                }
+            }
+                        
+            return \Response::json([
+                'status' => true,
+                'message' => "Draft Saved Successfully",
+                'data' =>  $data
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+
+    }
+
+    /**
+     * List Draft
+     * GET
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function list_draft(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $userId = $user->_id;
+            $listData = VideoDraft::where('userId', $userId)->orderBy('_id', 'desc')->get();
+            return \Response::json([
+                'status' => true,
+                'message' => "My drafts",
+                'data' => array(
+                    'listData' => $listData
+                )
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * Publish Draft
+     * Clear Draft
+     * Create Video From Draft
+     * POST
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function publish_draft(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $userId = $user->_id;
+            $request->validate([
+                'videoDraftId' =>'required|exists:mongodb.video_drafts,_id' 
+            ]);
+
+            $params = $request->except('_token');
+
+            return \Response::json([
+                'status' => true,
+                'message' => "Draft Published Successfully",
+                'data' =>  $params
+            ], 201);
+
 
 
         } catch (\Throwable $e) {

@@ -91,6 +91,9 @@ Route::group([
         Route::post('/comment', [VideoController::class, 'comment'])->name('comment');
         Route::post('/details', [VideoController::class, 'details'])->name('details');
         Route::post('/comments', [VideoController::class, 'comments'])->name('comments');
+        Route::post('/save_draft', [VideoController::class, 'save_draft'])->name('save_draft');
+        Route::get('/list_draft', [VideoController::class, 'list_draft'])->name('list_draft');
+        Route::post('/publish_draft', [VideoController::class, 'publish_draft'])->name('publish_draft');
     });
 
     Route::prefix('follow')->name('follow.')->group(function(){

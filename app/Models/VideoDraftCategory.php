@@ -5,30 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Video;
+use App\Models\VideoDraft;
 
 
-
-class VideoCategory extends Model
+class VideoDraftCategory extends Model
 {
     use HasFactory;
     protected $guarded = [];
     protected $connection = 'mongodb';
-    protected $collection = 'video_categories';
-    
+    protected $collection = 'video_draft_categories';
 
     /**
-     * Get the video that owns the VideoCategory
+     * Get the videodraft that owns the VideoDraftCategory
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function video(): BelongsTo
+    public function videodraft(): BelongsTo
     {
-        return $this->belongsTo(Video::class, 'videoId', '_id');
+        return $this->belongsTo(VideoDraft::class, 'videoDraftId', '_id');
     }
 
     /**
-     * Get the category that owns the VideoCategory
+     * Get the category that owns the VideoDraftCategory
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -36,7 +34,6 @@ class VideoCategory extends Model
     {
         return $this->belongsTo(Category::class, 'categoryId', '_id');
     }
-
 
 
 }
