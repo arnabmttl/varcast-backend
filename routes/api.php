@@ -56,6 +56,7 @@ Route::group([
     Route::post('/get-state','Api\HomeController@getState');
     Route::post('/get-city','Api\HomeController@getCity');
     Route::get('/home/index','Api\HomeController@index');
+    Route::post('/home/checkUserChat','Api\HomeController@checkUserChat');
 
     Route::post('/create-shorts','Api\UserShortsController@createShorts');
     Route::post('/list-shorts','Api\UserShortsController@listShorts');

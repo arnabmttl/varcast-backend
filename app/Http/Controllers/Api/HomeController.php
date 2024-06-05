@@ -12,6 +12,7 @@ use App\Models\State;
 use App\Models\City;
 use App\Models\HomeContent;
 use App\Models\Lead;
+use App\Models\UserChat;
 use Carbon\Carbon;
 use JWTAuth;
 use File;
@@ -160,6 +161,67 @@ class HomeController extends Controller
 				)
 			], 200);
 
+
+
+		} catch (\Throwable $e) {
+			return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+		}
+	}
+
+	public function checkUserChat(Request $request)
+	{
+		try {
+			if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+			$authId = $user->_id;
+			$request->validate([
+				'userId' => 'required|unique:mongodb.users,id'
+			]);
+			$params = $request->except('_token');
+			$userId = $params['userId'];
+
+			if($authId == $userId){
+				return response()->json([
+					'status' => false,
+					'message' => "This user id is yours",
+					'data' => (object)[]
+				],400);
+			}
+
+			$existsChat = UserChat::where(function($sender) use ($authId,$userId){
+				$sender->where('senderId',$authId)->where('receiverId',$userId);
+			})->orWhere(function($receiver) use ($authId,$userId){
+				$receiver->where('receiverId',$authId)->where('senderId',$userId);
+			})->first();
+
+			if(!empty($existsChat)){
+				## return id
+				$id = $existsChat->_id;
+
+			} else {
+				## creat new id
+				$data = UserChat::create([
+					'senderId' => $authId,
+					'receiverId' => $userId
+				]);
+				$id = $data->_id;
+			}
+
+			return response()->json([
+				'status' => true,
+				'message' => $id,
+                'data' => (object)[]
+			],200);
 
 
 		} catch (\Throwable $e) {
