@@ -205,9 +205,11 @@ class HomeController extends Controller
 				$receiver->where('receiverId',$authId)->where('senderId',$userId);
 			})->first();
 
+			$isExists = false;
 			if(!empty($existsChat)){
 				## return id
 				$id = $existsChat->_id;
+				$isExists = true;
 
 			} else {
 				## creat new id
@@ -220,8 +222,11 @@ class HomeController extends Controller
 
 			return response()->json([
 				'status' => true,
-				'message' => $id,
-                'data' => (object)[]
+				'message' => "Chat initiated",
+                'data' => array(
+					'isExists' => $isExists,
+					'chatId' => $id
+				)
 			],200);
 
 
