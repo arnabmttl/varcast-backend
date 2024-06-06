@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\HomeContent;
 use App\Models\Lead;
 use App\Models\UserChat;
+use App\Models\User;
 use Carbon\Carbon;
 use JWTAuth;
 use File;
@@ -221,6 +222,53 @@ class HomeController extends Controller
 				'status' => true,
 				'message' => $id,
                 'data' => (object)[]
+			],200);
+
+
+		} catch (\Throwable $e) {
+			return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+		}
+	}
+
+	public function chatUserList(Request $request)
+	{
+		try {
+			if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([					
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+			$authId = $user->_id;
+			$search = !empty($request->search)?$request->search:'';
+
+			$senderData = UserChat::where('senderId',$authId)->pluck('receiverId')->toArray();
+			$receiverData = UserChat::where('receiverId',$authId)->pluck('senderId')->toArray();
+			
+
+			$userIds = array_merge($senderData,$receiverData);
+			// dd($userIds);
+
+			$data = User::select('_id','name','email','phone')->whereIn('_id', $userIds);
+			if(!empty($search)){
+				$data = $data->where('name', 'LIKE', '%'.$search.'%');
+			}
+			
+			$data = $data->get()->toArray();
+			// dd($data);
+			return response()->json([
+				'status' => true,
+				'message' => "User List",
+                'data' => array(
+					'totalUser' => count($userIds),
+					'listData' => $data
+				)
 			],200);
 
 
