@@ -319,12 +319,14 @@ class UserAuthController extends Controller
                 'gender' =>  @$request->gender,
             ];
             if ($request->hasFile('govt_id_card')) {
-                $file      = $request->file('govt_id_card');
-                $time      = Carbon::now();
-                $extension = $file->getClientOriginalExtension();
-                $filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
-                $file->storeAs('public/documents', @$filename);
-                $data['govt_id_card'] = $filename;
+                
+                $file = $request->file('govt_id_card');
+                $file_name= time()."_".$file->getClientOriginalName();
+                $location="uploads/documents/";
+                $file->move($location,$file_name);
+                $filename=$location."".$file_name;
+                $data['govt_id_card']=$filename;
+                
             }
             $create = User::create(@$data);
             if(!empty(@$create)){
