@@ -90,7 +90,12 @@ User Management
                             @foreach(@$all_users as $user)
                             <tr>
                                 <td> 
+                                    @if (!empty($user->image))
+                                    <img src="{{ url($user->image) }}" style="width: 40px;">
+                                    @else
                                     <img src="{{ @$user->full_path_image }}" style="width: 40px;">
+                                    @endif
+                                    
                                 </td>
                                 <td>{{@$user->name}}</td>
                                 <td>{{@$user->email}}</td>

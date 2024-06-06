@@ -75,30 +75,46 @@ class ProfileController extends Controller
 					$data['gender'] = @$request->gender;
 				}
 				if ($request->hasFile('image')) {
-					if (@$user_date->image) {
-						if (File::exists("storage/app/public/profile_pics/" . @$user_date->image)) {
-							File::delete("storage/app/public/profile_pics/" . @$user_date->image);
+					if ($user_date->image) {
+						if (File::exists($user_date->image)) {
+							File::delete($user_date->image);
 						}
 					}
-					$file      = $request->file('image');
-					$time      = Carbon::now();
-					$extension = $file->getClientOriginalExtension();
-					$filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
-					$file->storeAs('public/profile_pics', @$filename);
-					$data['image'] = $filename;
+					// $file      = $request->file('image');
+					// $time      = Carbon::now();
+					// $extension = $file->getClientOriginalExtension();
+					// $filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
+					// $file->storeAs('public/profile_pics', @$filename);
+					// $data['image'] = $filename;
+
+
+					$file = $request->file('image');
+					$file_name= time()."_".$file->getClientOriginalName();
+					$location="uploads/documents/";
+					$file->move($location,$file_name);
+					$filename=$location."".$file_name;
+					$data['image']=$filename;
+
 				}
 				if ($request->hasFile('govt_id_card')) {
-					if (@$user_date->govt_id_card) {
-						if (File::exists("storage/app/public/documents/" . @$user_date->govt_id_card)) {
-							File::delete("storage/app/public/documents/" . @$user_date->govt_id_card);
+					if ($user_date->govt_id_card) {
+						if (File::exists($user_date->govt_id_card)) {
+							File::delete($user_date->govt_id_card);
 						}
 					}
-					$file      = $request->file('govt_id_card');
-					$time      = Carbon::now();
-					$extension = $file->getClientOriginalExtension();
-					$filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
-					$file->storeAs('public/documents', @$filename);
-					$data['govt_id_card'] = $filename;
+					// $file      = $request->file('govt_id_card');
+					// $time      = Carbon::now();
+					// $extension = $file->getClientOriginalExtension();
+					// $filename  = Str::random(5) . date_format($time, 'd') . rand(1, 9) . date_format($time, 'h') . "." . $extension;
+					// $file->storeAs('public/documents', @$filename);
+					// $data['govt_id_card'] = $filename;
+
+					$file = $request->file('govt_id_card');
+					$file_name= time()."_".$file->getClientOriginalName();
+					$location="uploads/documents/";
+					$file->move($location,$file_name);
+					$filename=$location."".$file_name;
+					$data['govt_id_card']=$filename;
 				}
 				$user_date->update(@$data);
 				$user_details = User::where('_id',@$user->_id)->first();
@@ -138,7 +154,7 @@ class ProfileController extends Controller
 			
 			$validator = Validator::make($request->all(), [
 				'old_password' => 'required',
-				'password' => 'required|min:8|confirmed',
+				'password' => 'required|confirmed',
 			],['password.required_with' => "The password field is required."]);
 			if ($validator->fails()) {
 				return response()->json([

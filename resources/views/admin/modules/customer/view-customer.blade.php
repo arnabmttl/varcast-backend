@@ -19,7 +19,12 @@
         <div class="col-md-3">
             <div class="box box-primary">
                 <div class="box-body box-profile">
+                    @if (!empty($user_details->image))
+                    <img src="{{ url($user_details->image) }}" class="profile-user-img img-responsive img-circle" style="width: 88px; height: 88px;" alt="User profile picture">
+                    @else
                     <img src="{{ @$user_details->full_path_image }}" class="profile-user-img img-responsive img-circle" style="width: 88px; height: 88px;" alt="User profile picture">
+                    @endif
+                    
                     <h3 class="profile-username text-center">{{@$user_details->name}}</h3>
                     <p class="text-muted text-center">{{@$user_details->email}}</p>
                     <ul class="list-group list-group-unbordered">
@@ -105,6 +110,16 @@
                         </p>
                         
                     </div>
+                    @if (!empty($user_details->govt_id_card))
+                    <div class="col-md-12">
+                        <strong> <i class="fa fa-hand-o-right margin-r-5"></i> Govt ID Proof</strong>
+                        <a href="{{ url($user_details->govt_id_card) }}" target="_blank">
+                            <img src="{{ url($user_details->govt_id_card) }}" class="attachment-img" style="width: 88px; height: 88px;" alt="">
+                        </a>
+                    </div>
+                    
+                    @endif
+                    
                 </div>
             </div>
         </div> 
