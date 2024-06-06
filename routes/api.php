@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CoinInventoryController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\CountryController;
+use App\Http\Controllers\Api\AudioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -135,6 +136,10 @@ Route::group([
     });
     Route::prefix('country')->name('country.')->group(function(){
         Route::get('/index', [CountryController::class, 'index'])->name('index');
+    });
+    Route::prefix('audio')->name('audio.')->group(function(){
+        Route::post('/create', [AudioController::class, 'create'])->name('create');
+        Route::get('/list', [AudioController::class, 'list'])->name('list');
     });
         
 });
