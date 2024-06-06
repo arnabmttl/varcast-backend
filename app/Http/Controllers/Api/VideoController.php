@@ -102,6 +102,7 @@ class VideoController extends Controller
                 'title' => 'nullable',
                 'description' => 'nullable',                
                 'image' => 'required|file',
+                'audioUrl' => 'nullable',
                 'tags' => 'array',
                 'categoryIds' => 'array'
             ]);
@@ -535,7 +536,7 @@ class VideoController extends Controller
             $filename=$location."".$file_name;
             $params['image']=$filename;
 
-           
+            
             unset($params['categoryIds']);
             $data = VideoDraft::create($params);
             $videoDraftId = $data->_id;
@@ -625,6 +626,7 @@ class VideoController extends Controller
                 'title' => 'nullable',
                 'description' => 'nullable',                
                 'image' => 'file',
+                'audioUrl' => 'nullable',
                 'tags' => 'nullable|array',
                 'categoryIds' => 'nullable|array'
             ]);
@@ -647,6 +649,7 @@ class VideoController extends Controller
             // dd($tags);
             $videoArr['title'] = isset($params['title'])?$params['title']:$videoDraft->title;
             $videoArr['description'] = isset($params['description'])?$params['description']:$videoDraft->description;
+            $videoArr['audioUrl'] = isset($params['audioUrl'])?$params['audioUrl']:$videoDraft->audioUrl;
             $videoArr['tags'] = $tags;
             $videoArr['image'] = $videoDraft->image;
             $videoArr['userId'] = $videoDraft->userId;
