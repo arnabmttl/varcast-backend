@@ -24,4 +24,6 @@ class Playlist extends Model
     {
         return $this->hasMany(PlaylistMedia::class, 'playlistId', '_id');
     }
+
+    
 }
