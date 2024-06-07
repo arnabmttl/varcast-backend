@@ -267,6 +267,7 @@ class UserAuthController extends Controller
 
     // both end registration 
     public function register(Request $request){
+        \App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
         $validator = Validator::make($request->all(),[
             'name'  => 'required|string|max:199',
             'email' =>  [
