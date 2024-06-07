@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\AudioController;
+use App\Http\Controllers\Api\PlaylistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -141,6 +142,13 @@ Route::group([
         Route::post('/create', [AudioController::class, 'create'])->name('create');
         Route::get('/list', [AudioController::class, 'list'])->name('list');
     });
+    Route::prefix('playlist')->name('playlist.')->group(function(){
+        Route::get('/index', [PlaylistController::class, 'index'])->name('list');
+        Route::post('/create', [PlaylistController::class, 'create'])->name('create');
+        Route::post('/add_media', [PlaylistController::class, 'add_media'])->name('add_media');
+    });
+
+    
         
 });
 
