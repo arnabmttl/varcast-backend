@@ -583,7 +583,7 @@ class VideoController extends Controller
 				], 200);
 			}
             $userId = $user->_id;
-            $listData = VideoDraft::where('userId', $userId)->orderBy('_id', 'desc')->get();
+            $listData = VideoDraft::with('categories')->where('userId', $userId)->orderBy('_id', 'desc')->get();
             return \Response::json([
                 'status' => true,
                 'message' => "My drafts",
