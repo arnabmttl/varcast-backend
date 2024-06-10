@@ -45,7 +45,7 @@ class PlaylistController extends Controller
             $listData = Playlist::where('userId', $userId)->with('media');
             $countData = Playlist::where('userId', $userId)->count();
 
-            $listData = $listData->take($take)->skip($skip)->get();
+            $listData = $listData->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
             return \Response::json([
                 'status' => true,
