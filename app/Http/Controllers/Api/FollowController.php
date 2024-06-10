@@ -56,16 +56,6 @@ class FollowController extends Controller
             }
             $params = $request->except('_token');
             $userId = $params['userId'];
-
-            $existUser = User::where('_id', $userId)->first();
-            if(empty($existUser)){
-                return response()->json([
-                    "code"=> 400,
-                    'status' => 'validation',
-                    'message' => "Invalid user id"
-                ],400);
-            }
-
             if($authId == $userId){
                 return response()->json([
                     "code"=> 400,
@@ -73,7 +63,6 @@ class FollowController extends Controller
                     'message' => "Same user id"
                 ],400);
             }
-
             $msg = "";
             $existFollow = Follow::where('authId', $authId)->where('userId', $userId)->first();
             
@@ -92,8 +81,6 @@ class FollowController extends Controller
                 $authUserName = $user->name;
                 $notificationMsg = $authUserName." is following you";
                 Helper::addNotification($params['userId'], 'follow', $notificationMsg);
-
-
             }
 
             return \Response::json([
