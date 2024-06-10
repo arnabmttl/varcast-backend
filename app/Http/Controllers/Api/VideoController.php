@@ -375,7 +375,7 @@ class VideoController extends Controller
             $userId = $user->_id;
 
             $videoId = !empty($request->videoId)?$request->videoId:'';
-            $data = Video::with('categories:_id,categoryId,videoId')->find($videoId);
+            $data = Video::with('categories:_id,categoryId,videoId')->with('user:_id,name,email,phone')->find($videoId);
 
             $isLiked = VideoLike::where('videoId', $videoId)->where('userId', $userId)->count();
             $isLiked = (!empty($isLiked))?true:false;
