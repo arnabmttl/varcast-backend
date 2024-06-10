@@ -342,7 +342,7 @@ class PodcastController extends Controller
             $userId = $user->_id;
 
             $podcastId = !empty($request->podcastId)?$request->podcastId:'';
-            $data = Podcast::find($podcastId);
+            $data = Podcast::with('user:_id,name,email,phone')->find($podcastId);
             $isLiked = PodcastLike::where('podcastId', $podcastId)->where('userId', $userId)->count();
             $isLiked = (!empty($isLiked))?true:false;
 

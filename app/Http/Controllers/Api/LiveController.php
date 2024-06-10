@@ -338,7 +338,7 @@ class LiveController extends Controller
             $userId = $user->_id;
 
             $liveId = !empty($request->liveId)?$request->liveId:'';
-            $data = Live::find($liveId);
+            $data = Live::with('user:_id,name,email,phone')->find($liveId);
             $isLiked = LiveLike::where('liveId', $liveId)->where('userId', $userId)->count();
             $isLiked = (!empty($isLiked))?true:false;
 
