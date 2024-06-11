@@ -147,14 +147,15 @@ class VideoController extends Controller
 
             $file = $request->file('image');
             $file_name= time()."_".$file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
             $location="uploads/videos/";
             //dd($location);
             $file->move($location,$file_name);
             $filename=$location."".$file_name;
             $params['image']=$filename;
 
-            $ext = explode(".",$filename);
-            $ext = end($ext);
+            // $ext = explode(".",$filename);
+            // $ext = end($ext);
             # image or video
             $videoExtensions = ["mp4","mov","wmv","avi","flv","avchd","f4v","swf","mkv"];
             $imageExtensions = ["jpg","png","jpeg","gif","svg","tiff"];
@@ -162,9 +163,9 @@ class VideoController extends Controller
             // echo $ext; die;
 
             $image_type = "image";
-            if(in_array($ext,$videoExtensions)){
+            if(in_array($extension,$videoExtensions)){
                 $image_type = "video";
-            } else if (in_array($ext,$imageExtensions)){
+            } else if (in_array($extension,$imageExtensions)){
                 $image_type = "image";
             }
 
