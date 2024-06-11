@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\VideoCategory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+
 class Category extends Model
 {
     use HasFactory, SoftDeletes;
@@ -31,5 +35,15 @@ class Category extends Model
         } else {
             return url('images/no-image.png');
         }
+    }
+
+    /**
+     * Get all of the videos for the Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function videos(): HasMany
+    {
+        return $this->hasMany(VideoCategory::class, 'categoryId', '_id');
     }
 }
