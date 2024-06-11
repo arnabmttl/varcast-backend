@@ -14,6 +14,7 @@ use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\commonMail;
 use Mail;
+use Illuminate\Support\Facades\DB;
 
 class Helper
 {
@@ -223,6 +224,11 @@ class Helper
                 'message' => $message
             ]
         );
+    }
+
+    public static function getSingleCollectionData($collectionName,$idValue){
+        $data = DB::connection('mongodb')->collection($collectionName)->where('_id',$idValue)->first();
+        return $data;
     }
 
 }
