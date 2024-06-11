@@ -147,7 +147,9 @@ class HomeController extends Controller
 			$latest_lives = \App\Models\Live::where('userId', $userId)->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followings = \App\Models\Follow::where('authId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
-			$categories = \App\Models\Category::select('_id','name','slug')->where('status', 'A')->get();
+			$categories = \App\Models\Category::select('_id','name','slug')->with('videos', function($videos){
+				$videos->with('video');
+			})->where('status', 'A')->get();
 
 			return response()->json([
 				'status' => true,
