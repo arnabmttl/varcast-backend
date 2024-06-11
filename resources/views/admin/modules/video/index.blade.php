@@ -1,12 +1,12 @@
-@section('title', 'Podcasts')
+@section('title', 'Publications')
 @extends('admin.layouts.app')
 
 @section('content')
 <section class="content-header">
-    <h1>Podcasts</h1>
+    <h1>Publications</h1>
     <ol class="breadcrumb">
         <li><a href="{{route('admin.home')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Podcasts</li>
+        <li class="active">Publications</li>
     </ol>
 </section>
 
@@ -22,7 +22,12 @@
                 <thead>
                     <tr>
                         <th>Sl</th>
-                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Tags</th>
+                        <th>Audio</th>
+                        <th>Categories</th>
+                        <th>Image/Video</th>
                         <th>Created By</th>
                     </tr>
                 </thead>
@@ -41,12 +46,54 @@
                     @foreach ( $data as $row)
                     <tr>
                         <td>{{ $i }}</td>
+                        <td>{{ $row['title'] }}</td>
+                        <td>{{ $row['description'] }}</td>
                         <td>
-                            @if(!empty($row['image']))
-                                <img src="{{ url($row['image']) }}" style="width: 40px;" alt="">
-                            @else
-                                <img src="{{ asset('images/no-image.png') }}" style="width: 40px;" alt="">
+                            @if(!empty($row['tags']))
+                            @foreach($row['tags'] as $tags)
+                            <ul>
+                                <li>{{$tags}}</li>
+                            </ul>
+                            @endforeach
                             @endif
+                        </td>
+                        <td>                            
+                            <audio controls>
+                                <source src="{{ url($row['audioUrl']) }}" >
+                            </audio>
+                        </td>
+                        <td>
+                            @php    
+                            $categories = $row['categories'];
+
+                            @endphp
+                            @if(!empty($categories))
+                            @foreach($categories as $cat)
+                            @php
+
+                                $category = Helper::getSingleCollectionData('categories',$cat->categoryId);
+                                $catName = $category['name'];
+                                // dd($catName);
+                            @endphp
+                            <ul>
+                                <li>{{ $catName }}</li>
+                            </ul>
+                            @endforeach
+                            @endif
+                        </td>
+                        <td>
+                            @if($row['image_type'] == 'image')
+                                @if(!empty($row['image']))
+                                    <img src="{{ url($row['image']) }}" style="width: 40px;" alt="">
+                                @else
+                                    <img src="{{ asset('images/no-image.png') }}" style="width: 40px;" alt="">
+                                @endif
+                            @else
+                                <video width="300" height="150" controls>
+                                    <source src="{{url($row['image'])}}" >
+                                </video>
+                            @endif
+                            
                         </td>
                         <td>
                             {{ $row['user']['name'] }}

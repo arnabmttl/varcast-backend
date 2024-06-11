@@ -49,7 +49,7 @@
             </li>
             <li class="@if(Route::is('admin.video.*') ) active @endif">
                 <a href="{{route('admin.video.index')}}"><i class="fa fa-video-camera"></i>
-                    <span>Videos</span>
+                    <span>Publications</span>
                 </a>
             </li>
             <li class="@if(Route::is('admin.emoji.index') || Route::is('admin.emoji.add') || Route::is('admin.emoji.edit')) active @endif">
