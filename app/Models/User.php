@@ -64,14 +64,14 @@ class User extends Authenticatable implements JWTSubject
     }
     public function getFullPathImageAttribute (){
         if (array_key_exists('image', $this->attributes) && (!empty($this->attributes['image']))) {
-            return url('storage/profile_pics/'.$this->attributes['image']);
+            return url($this->attributes['image']);
         } else {
             return url('images/no-image.png');
         }
     }
     public function getFullPathGovIdCardAttribute (){
         if (array_key_exists('govt_id_card', $this->attributes) && (!empty($this->attributes['govt_id_card']))) {
-            return url('storage/documents/'.$this->attributes['govt_id_card']);
+            return url($this->attributes['govt_id_card']);
         } else {
             return url('images/no-image.png');
         }
