@@ -153,7 +153,24 @@ class VideoController extends Controller
             $filename=$location."".$file_name;
             $params['image']=$filename;
 
-           
+            $ext = explode(".",$filename);
+            $ext = end($ext);
+            # image or video
+            $videoExtensions = ["mp4","mov","wmv","avi","flv","avchd","f4v","swf","mkv"];
+            $imageExtensions = ["jpg","png","jpeg","gif","svg","tiff"];
+
+            // echo $ext; die;
+
+            $image_type = "image";
+            if(in_array($ext,$videoExtensions)){
+                $image_type = "video";
+            } else if (in_array($ext,$imageExtensions)){
+                $image_type = "image";
+            }
+
+            // echo $image_type; die;
+
+            $params['image_type'] = $image_type;
             unset($params['categoryIds']);
             $data = Video::create($params);
             $videoId = $data->_id;
