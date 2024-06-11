@@ -354,6 +354,7 @@ class LiveController extends Controller
                 ]);
             }
             $data->countView = LiveView::where('liveId',$liveId)->count();
+            $data->countLike = LiveLike::where('liveId',$liveId)->count();
             $data->isLiked = $isLiked;
             $data->latestComments = $latestComments;
 

@@ -358,6 +358,7 @@ class PodcastController extends Controller
                 ]);
             }
             $data->countView = PodcastView::where('podcastId',$podcastId)->count();
+            $data->countLike = PodcastLike::where('podcastId',$podcastId)->count();
             $data->isLiked = $isLiked;
             $data->latestComments = $latestComments;       
 

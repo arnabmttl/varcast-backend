@@ -392,6 +392,7 @@ class VideoController extends Controller
             }
 
             $data->countView = VideoView::where('videoId',$videoId)->count();
+            $data->countLike = VideoLike::where('videoId',$videoId)->count();
             $data->isLiked = $isLiked;
             $data->latestComments = $latestComments;
 
