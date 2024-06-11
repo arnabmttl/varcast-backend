@@ -38,6 +38,8 @@ class ProfileController extends Controller
 					'message' => @trans('error.not_found'),
 				], 200);
 			}
+
+			\App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
 			
 			$validator = Validator::make($request->all(), [
 				'name'  => 'required|string|max:199',
