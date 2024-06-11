@@ -73,8 +73,9 @@ class TestController extends Controller
 
         $file = $request->file('file');
         $file_name= time()."_".$file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
         $location="uploads/livevideos/";
-        //dd($location);
+        dd($extension);
         $file->move($location,$file_name);
         $filename=$location."".$file_name;
         // $params['image']=$filename;
