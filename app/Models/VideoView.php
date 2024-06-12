@@ -12,7 +12,7 @@ class VideoView extends Model
     use HasFactory;
     protected $guarded = [];
     protected $connection = 'mongodb';
-    protected $collection = 'live_views';
+    protected $collection = 'video_views';
 
     /**
      * Get the user that owns the PodcastLike
