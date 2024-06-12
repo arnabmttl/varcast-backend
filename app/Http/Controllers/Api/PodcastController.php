@@ -287,7 +287,7 @@ class PodcastController extends Controller
             /* Add Notification */
             if($podcastUserId != $user->_id){
                 $authUserName = $user->name;
-                $notificationMsg = $authUserName." commented on your your podcast";
+                $notificationMsg = $authUserName." commented on your podcast";
                 Helper::addNotification($podcastUserId, 'comment_podcast', $notificationMsg);
             }
     

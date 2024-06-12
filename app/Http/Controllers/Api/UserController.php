@@ -81,7 +81,7 @@ class UserController extends Controller
 			$userId = !empty($request->userId)?$request->userId:'';
 			$latest = 10;
 
-			$data = User::select('_id','name','phone','email','username','gender')->where('_id', $userId)->first();
+			$data = User::find($userId);
 			$count_podcasts = \DB::connection('mongodb')->collection('podcasts')->where('userId', $userId)->count();
 			$count_videos = \DB::connection('mongodb')->collection('videos')->where('userId', $userId)->count();
 			$count_followings = \DB::connection('mongodb')->collection('follows')->where('authId', $userId)->count();

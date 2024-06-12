@@ -338,7 +338,7 @@ class VideoController extends Controller
             /* Add Notification */
             if($videoUserId != $user->_id){
                 $authUserName = $user->name;
-                $notificationMsg = $authUserName." commented on your your video";
+                $notificationMsg = $authUserName." commented on your video";
                 Helper::addNotification($videoUserId, 'comment_video', $notificationMsg);
             }
     
