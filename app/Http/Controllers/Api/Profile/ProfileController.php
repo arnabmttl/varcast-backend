@@ -40,21 +40,19 @@ class ProfileController extends Controller
 				], 200);
 			}
 
-			\App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
-			
 			$validator = Validator::make($request->all(), [
 				'name'  => 'nullable|string|max:199',
-				// 'image' => 'nullable|image',
 				'dob' => 'nullable|date',
-	            'gender' => 'nullable|in:M,F,O',
-	            // 'govt_id_card' => 'nullable',
+	            'gender' => 'nullable|in:M,F,O'
 			]);
 			if ($validator->fails()) {
-				return response()->json([
-					"code"=> 200,
-					'status' => 'error',
-					'message' => @$validator->errors()->first()
-				],200);
+				foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                }
 			}
 			if (!empty(@$user)) {
 				if(@$user->status == 'I')
@@ -161,11 +159,13 @@ class ProfileController extends Controller
 				'image' => 'required|image',				
 			]);
 			if ($validator->fails()) {
-				return response()->json([
-					"code"=> 200,
-					'status' => 'error',
-					'message' => @$validator->errors()->first()
-				],200);
+				foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                }
 			}
 
 			if ($request->hasFile('image')) {
@@ -227,11 +227,13 @@ class ProfileController extends Controller
 				'govt_id_card' => 'required|image',				
 			]);
 			if ($validator->fails()) {
-				return response()->json([
-					"code"=> 200,
-					'status' => 'error',
-					'message' => @$validator->errors()->first()
-				],200);
+				foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' => "validation",
+                        'data' =>  $value[0]
+                    ], 400);
+                }
 			}
 
 			if ($request->hasFile('govt_id_card')) {
