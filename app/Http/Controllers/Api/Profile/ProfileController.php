@@ -42,7 +42,7 @@ class ProfileController extends Controller
 			\App\Models\ApiRequestLog::create(['request' => json_encode($request->all())]);
 			
 			$validator = Validator::make($request->all(), [
-				'name'  => 'required|string|max:199',
+				'name'  => 'nullable|string|max:199',
 				'image' => 'nullable|image',
 				'dob' => 'nullable|date',
 	            'gender' => 'nullable|in:M,F,O',
