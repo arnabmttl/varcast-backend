@@ -18,6 +18,9 @@ use App\Http\Controllers\Api\PlaylistController;
 use App\Http\Controllers\Api\HelpCentreController;
 use App\Http\Controllers\Api\ReportController;
 
+
+use App\Http\Controllers\Api\ArticleController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,6 +42,8 @@ Route::group([
     // Route::group(['middleware' => 'checkUserStatus'], function () {
     Route::get('/get-user','Api\Auth\UserAuthController@getUser');
     Route::post('/edit-profile','Api\Profile\ProfileController@edituserProfile');
+    Route::post('/uploadProfilePicture','Api\Profile\ProfileController@uploadProfilePicture');
+    Route::post('/uploadGovtId','Api\Profile\ProfileController@uploadGovtId');
     Route::post('/update-password','Api\Profile\ProfileController@updatePassword');
     Route::post('/user-update-data','Api\Profile\ProfileController@updateUserEmailorPhone');
     Route::post('/all-tag','Api\MasterController@allTags');
@@ -156,6 +161,7 @@ Route::group([
     Route::prefix('report')->name('report.')->group(function(){
         Route::post('/add', [ReportController::class, 'add'])->name('add');
         Route::get('/list', [ReportController::class, 'list'])->name('list');
-    });      
+    });  
+    
 });
 
