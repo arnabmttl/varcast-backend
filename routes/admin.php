@@ -160,12 +160,13 @@ Route::middleware('admin.auth')->group(function(){
 	});
 
 	Route::prefix('/podcast')->name('podcast.')->group(function(){
-		Route::get('/index','Modules\Podcast\PodcastController@index')->name('index');
-		
+		Route::get('/index','Modules\Podcast\PodcastController@index')->name('index');		
 	});
 	Route::prefix('/video')->name('video.')->group(function(){
-		Route::get('/index','Modules\Video\VideoController@index')->name('index');
-		
+		Route::get('/index','Modules\Video\VideoController@index')->name('index');		
+	});
+	Route::prefix('/live')->name('live.')->group(function(){
+		Route::get('/index','Modules\Live\LiveController@index')->name('index');		
 	});
 
 });
