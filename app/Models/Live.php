@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // use Jenssegers\Mongodb\Relations\HasMany;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
+use App\Models\LiveView;
 use MongoDB\BSON\ObjectID;
 
 
@@ -49,5 +50,15 @@ class Live extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId', '_id');
+    }
+
+    /**
+     * Get all of the views for the Live
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function views(): HasMany
+    {
+        return $this->hasMany(LiveView::class, 'liveId', '_id');
     }
 }

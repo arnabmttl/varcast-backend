@@ -2,6 +2,7 @@
 <script src="{{asset('inhouse/bower_components/jquery/dist/jquery.min.js')}}"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('inhouse/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+<script src="{{asset('inhouse/bower_components/chart.js/Chart.js')}}"></script>
 <!-- iCheck -->
 <script src="https://adminlte.io/themes/AdminLTE/plugins/iCheck/icheck.min.js"></script>
 <!-- SlimScroll -->

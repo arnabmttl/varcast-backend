@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\VideoLike;
 use App\Models\VideoComment;
+use App\Models\VideoView;
 use App\Models\User;
 use App\Models\Category;
 
@@ -57,5 +58,15 @@ class Video extends Model
     public function categories(): HasMany
     {
         return $this->hasMany(VideoCategory::class, 'videoId', '_id');
+    }
+
+    /**
+     * Get all of the views for the Podcast
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function views(): HasMany
+    {
+        return $this->hasMany(VideoView::class, 'videoId', '_id');
     }
 }

@@ -52,6 +52,11 @@
                     <span>Publications</span>
                 </a>
             </li>
+            <li class="@if(Route::is('admin.live.*') ) active @endif">
+                <a href="{{route('admin.live.index')}}"><i class="fa fa-video-camera"></i>
+                    <span>Live</span>
+                </a>
+            </li>
             <li class="@if(Route::is('admin.emoji.index') || Route::is('admin.emoji.add') || Route::is('admin.emoji.edit')) active @endif">
                 <a href="{{route('admin.emoji.index')}}"><i class="fa fa-smile-o"></i>
                     <span>Emoji Management</span>

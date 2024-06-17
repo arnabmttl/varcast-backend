@@ -37,6 +37,7 @@
                         <th>Image</th>
                         <th>Audio/Video</th>
                         <th>Created By</th>
+                        <th>View Count</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,7 +94,9 @@
                         <td>
                             {{ $row['user']['name'] }}
                         </td>
-                        
+                        <td>
+                            {{ count($row['views']) }}
+                        </td>
                         
                     </tr>
                     @php
