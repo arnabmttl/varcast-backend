@@ -15,6 +15,7 @@ use App\Models\Video;
 use App\Models\VideoView;
 use App\Models\LiveView;
 use App\Models\PodcastView;
+use App\Models\Live;
 use App\Helper\Helper;
 use Illuminate\Support\Facades\DB;
 
@@ -45,6 +46,7 @@ class HomeController extends Controller
         $data['total_testimonial'] = Testimonial::count();
         $data['total_podcast'] = Podcast::count();
         $data['total_video'] = Video::count();
+        $data['total_live'] = Live::count();
 
         /*$video_views = VideoView::query();
         $video_views = $video_views->groupBy('videoId')->get()->toArray();     

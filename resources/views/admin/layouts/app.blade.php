@@ -18,12 +18,8 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">  --}}
 
         <!-- Styles -->
-        @include('admin.includes.script')
-        @stack('script')
         @include('admin.includes.style')
         @stack('style')
-
-        
         {{--  <link href="{{ asset('public/css/app.css') }}" rel="stylesheet">  --}}
     </head>
     <body class="hold-transition @auth('admin') skin-blue sidebar-mini @else login-page @endauth">
@@ -44,7 +40,8 @@
             @yield('content')
         @endauth
 
-        
+        @include('admin.includes.script')
+        @stack('script')
 
         @include('admin.includes.messages')
         <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
