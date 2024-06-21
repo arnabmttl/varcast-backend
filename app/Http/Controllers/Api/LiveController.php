@@ -59,11 +59,23 @@ class LiveController extends Controller
                 }
                 ])->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
             // $listData = Live::with('user:_id,name,email,phone')->orderBy('_id', 'desc')->get();
+
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
             return \Response::json([
                 'status' => true,
                 'message' => "All live lists",
                 'data' => array(
                     'countData' => $countData,
+                    'isPrev' => $isPrev,
+                    'isNext' => $isNext,
                     'listData' => $listData
                 )
             ], 200);

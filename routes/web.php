@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+
+Route::get('/admin_password_reset', function () {
+    return view('mail.admin_password_reset');
+});
+
 // Auth::routes();
 
 // Login

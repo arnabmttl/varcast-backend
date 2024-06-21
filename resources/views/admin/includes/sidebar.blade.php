@@ -22,11 +22,11 @@
                     <span>User Management</span>
                 </a>
             </li>
-            <li class="@if(Route::is('admin.tag.index') || Route::is('admin.tag.add') || Route::is('admin.tag.edit')) active @endif">
+            {{-- <li class="@if(Route::is('admin.tag.index') || Route::is('admin.tag.add') || Route::is('admin.tag.edit')) active @endif">
                 <a href="{{route('admin.tag.index')}}"><i class="fa fa-tag"></i>
                     <span>Tag Management</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="@if(Route::is('admin.category') || Route::is('admin.category.add') || Route::is('admin.category.edit')) active @endif">
                 <a href="{{route('admin.category')}}"><i class="fa fa-list"></i>
                     <span>Category Management</span>

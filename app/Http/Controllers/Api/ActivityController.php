@@ -43,15 +43,26 @@ class ActivityController extends Controller
             $userId = $user->_id;
 
             $countData = Activity::where('userId', $userId)->count();
-            $data = Activity::where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
+            $listData = Activity::where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
             
             return \Response::json([
                 'status' => true,
                 'message' => "My Activities",
                 'data' => array(
                     'countData' => $countData,
-                    'listData' => $data
+                    'isNext' => $isNext,
+                    'isPrev' => $isPrev,
+                    'listData' => $listData
                 )
             ], 200);
 
