@@ -45,15 +45,26 @@ class NotificationController extends Controller
             $userId = $user->_id;
 
             $countData = Notification::where('userId', $userId)->count();
-            $data = Notification::where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
+            $listData = Notification::where('userId', $userId)->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
             
             return \Response::json([
                 'status' => true,
                 'message' => "My notifications",
                 'data' => array(
                     'countData' => $countData,
-                    'listData' => $data
+                    'isNext' => $isNext,
+                    'isPrev' => $isPrev,
+                    'listData' => $listData
                 )
             ], 200);
 

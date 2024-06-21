@@ -10,6 +10,7 @@ use Helper;
 use App\Models\Podcast;
 use App\Models\PodcastLike;
 use App\Models\PodcastComment;
+use Illuminate\Support\Facades\Mail;
 
 class TestController extends Controller
 {
@@ -136,6 +137,15 @@ class TestController extends Controller
                 'data' => (object)[]
 			],403);
         }
+    }
+
+
+    public function sendMail(Request $request) {
+        $toMail = "arnabm.ttl@gmail.com";
+        $data['msg'] = 'Your email verification code is 1234.';
+        $data['subject'] = 'User Email Verification OTP Mail';
+        $data['name'] = "Arnab";
+        Mail::to($toMail)->send($data);
     }
 
 }

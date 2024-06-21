@@ -47,11 +47,23 @@ class PlaylistController extends Controller
 
             $listData = $listData->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
 
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
+
             return \Response::json([
                 'status' => true,
                 'message' => "My Playlists",
                 'data' => array(
                     'countData' => $countData,
+                    'isNext' => $isNext,
+                    'isPrev' => $isPrev,
                     'listData' => $listData
                 )
             ], 200);

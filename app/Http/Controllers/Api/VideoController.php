@@ -63,11 +63,24 @@ class VideoController extends Controller
                     $l->with('user:_id,name,email');
                 }
                 ])->orderBy('_id', 'desc')->take($take)->skip($skip)->get();
+
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
+            
             return \Response::json([
                 'status' => true,
                 'message' => "All videos",
                 'data' => array(
                     'countData' => $countData,
+                    'isPrev' => $isPrev,
+                    'isNext' => $isNext,
                     'listData' => $listData
                 )
             ], 200);
@@ -470,12 +483,24 @@ class VideoController extends Controller
 
             $totalData = VideoComment::where('videoId',$videoId)->count();
             $listData = VideoComment::with('user:_id,name,email,phone,username')->where('videoId', $videoId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
+
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
             
             return \Response::json([
                 'status' => true,
                 'message' => "Videos Comments",
                 'data' =>  array(
                     'totalData' => $totalData,
+                    'isNext' => $isNext,
+                    'isPrev' => $isPrev,
                     'listData' => $listData
                 )
             ], 200);

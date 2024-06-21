@@ -42,7 +42,7 @@ class PodcastController extends Controller
 				], 200);
 			}
             $take = !empty($request->take)?$request->take:15;
-            $page = !empty($request->page)?$request->page:0;
+            $page = isset($request->page)?$request->page:0;
             $skip = ($page * $take);
 
             $data = (object)[];
@@ -53,12 +53,24 @@ class PodcastController extends Controller
                 },
                 'likes'
                 ])->orderBy('_id','desc')->take($take)->skip($skip)->get();
+
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }           
             
             return \Response::json([
                 'status' => true,
                 'message' => "All podcast lists",
                 'data' => array(
                     'countData' => $countData,
+                    'isPrev' => $isPrev,
+                    'isNext' => $isNext,
                     'listData' => $listData
                 )
             ], 200);
@@ -418,12 +430,23 @@ class PodcastController extends Controller
 
             $totalData = PodcastComment::where('podcastId',$podcastId)->count();
             $listData = PodcastComment::with('user:_id,name,email,phone,username')->where('podcastId', $podcastId)->orderBy('_id','desc')->take($take)->skip($skip)->get();
-            
+
+            $isPrev = $isNext = false;
+            if(count($listData) != 0 ){
+                if(count($listData) >= $take) {
+                    $isNext = true;
+                }
+            }                           
+            if($page > 0){
+                $isPrev = true;
+            }
             return \Response::json([
                 'status' => true,
                 'message' => "Podcast Comments",
                 'data' =>  array(
                     'totalData' => $totalData,
+                    'isPrev' => $isPrev,
+                    'isNext' => $isNext,
                     'listData' => $listData
                 )
             ], 200);
