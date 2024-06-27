@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Follow;
 use Storage;
 use JWTAuth;
 use Validator;
@@ -92,6 +93,13 @@ class UserController extends Controller
 			$latest_followings = \App\Models\Follow::where('authId', $userId)->with('followings:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 			$latest_followers = \App\Models\Follow::where('userId', $userId)->with('followers:_id,name,email,phone')->orderBy('_id', 'desc')->take($latest)->get();
 
+			$is_following = false;
+			$following = Follow::where('authId', $authId)->where('userId', $userId)->first();
+			if(!empty($following)){
+				$is_following = true;
+			}
+			$data->is_following = $is_following;
+
 			$data->count_podcasts = $count_podcasts;
 			$data->count_videos = $count_videos;
 			$data->count_followings = $count_followings;
@@ -100,6 +108,8 @@ class UserController extends Controller
 			$data->latest_videos = $latest_videos;
 			$data->latest_followings = $latest_followings;
 			$data->latest_followers = $latest_followers;
+
+			
 			// dd($data);
 			return response()->json([
 				'status' => true,
