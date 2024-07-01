@@ -10,6 +10,7 @@ use JWTAuth;
 use App\Models\Live;
 use App\Models\LiveLike;
 use App\Models\LiveComment;
+use App\Models\LiveCommentMessage;
 use App\Models\LiveView;
 use App\Models\Follow;
 use Illuminate\Validation\Rule;
@@ -445,6 +446,101 @@ class LiveController extends Controller
 			],403);
         }
     }
+
+    
+    /*
+    ** Message on Comment
+    ** POST
+    *
+    * @return \Illuminate\Http\Response
+    */
+
+    public function message_comment(Request $request) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+            $userId = $user->_id;
+
+            $validator = \Validator::make($request->all(),[
+                'commentId' =>'required|exists:mongodb.live_comments,_id',
+                'message' =>'required'
+            ]);
+    
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return \Response::json([
+                        'status' => false,
+                        'message' =>  $value[0],
+                        'data' => (object)[]
+                    ], 400);
+                }
+            }
+            $params = $request->except('_token');
+            $userId = $user->_id;
+            $comment =  Helper::getSingleCollectionData('live_comments', $params['commentId']);
+            $params['liveId'] = $comment['liveId'];
+            $params['userId'] = $userId;
+
+            $data = LiveCommentMessage::create($params);
+            
+            return \Response::json([
+                'status' => true,
+                'message' => "Message posted on comment successfully",
+                'data' =>  $data
+            ], 200);
+
+            
+
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
+    /**
+     * Message List On Comments
+     * GET
+     *
+     * @return \Illuminate\Http\Response
+    */
+
+    public function comment_messages(Request $request,$id) : JsonResponse {
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+				return response()->json([
+					'status' => false,
+					'message' => @trans('error.not_found'),
+                    'data' => (object)[]
+				], 200);
+			}
+
+            // dd($id);
+            $comment = LiveComment::findOrFail($id);
+            $messages = LiveCommentMessage::with('user:_id,name,email,phone,image,govt_id_card')->where('commentId',$id)->orderBy('_id', 'desc')->get();
+            return response()->json([
+				'status' => false,
+				'message' =>"Messages",
+                'data' => $messages
+			],200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+				'status' => false,
+				'message' => $e->getMessage(),
+                'data' => (object)[]
+			],403);
+        }
+    }
+
 
 
 }

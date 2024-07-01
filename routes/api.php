@@ -101,6 +101,8 @@ Route::group([
         Route::post('/comment', [LiveController::class, 'comment'])->name('comment');
         Route::post('/details', [LiveController::class, 'details'])->name('details');
         Route::post('/comments', [LiveController::class, 'comments'])->name('comments');
+        Route::post('/message-comment', [LiveController::class, 'message_comment'])->name('message_comment');
+        Route::get('/comment-messages/{id}', [LiveController::class, 'comment_messages'])->name('comment_messages');
     });
 
     Route::prefix('videos')->name('videos.')->group(function(){
@@ -113,6 +115,8 @@ Route::group([
         Route::post('/save_draft', [VideoController::class, 'save_draft'])->name('save_draft');
         Route::get('/list_draft', [VideoController::class, 'list_draft'])->name('list_draft');
         Route::post('/publish_draft', [VideoController::class, 'publish_draft'])->name('publish_draft');
+        Route::post('/message-comment', [VideoController::class, 'message_comment'])->name('message_comment');
+        Route::get('/comment-messages/{id}', [VideoController::class, 'comment_messages'])->name('comment_messages');
     });
 
     Route::prefix('follow')->name('follow.')->group(function(){
