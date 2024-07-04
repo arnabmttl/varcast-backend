@@ -133,6 +133,7 @@ class LiveController extends Controller
             $live->overview = $params['overview'];
             $live->imageUrl = $params['imageUrl'];
             $live->videoUrl = $params['videoUrl'];
+            $live->liveUniqueId = $params['liveUniqueId'];
             $live->isActive = true;                         
             $live->save();
 
